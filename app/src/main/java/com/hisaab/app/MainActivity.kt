@@ -1388,49 +1388,7 @@ selectedPreset?.let { preset ->
             )
         }
 
-        Text("पहला रंग (HEX)", color = Color.White)
-
-        OutlinedTextField(
-            value = colorOne,
-            onValueChange = {
-                colorOne = it.uppercase().filter { c ->
-                    c in "0123456789ABCDEF"
-                }.take(6)
-
-                if (colorOne.length == 6) {
-                    val value = ("FF" + colorOne).toLong(16)
-                    onDesignChange(
-                        selectedScreen,
-                        design.copy(color1 = value)
-                    )
-                }
-            },
-            label = { Text("जैसे FF4488") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
-        )
-
-        Text("दूसरा रंग (HEX)", color = Color.White)
-
-        OutlinedTextField(
-            value = colorTwo,
-            onValueChange = {
-                colorTwo = it.uppercase().filter { c ->
-                    c in "0123456789ABCDEF"
-                }.take(6)
-
-                if (colorTwo.length == 6) {
-                    val value = ("FF" + colorTwo).toLong(16)
-                    onDesignChange(
-                        selectedScreen,
-                        design.copy(color2 = value)
-                    )
-                }
-            },
-            label = { Text("जैसे 3355AA") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
-        )
+        
 
         Text(
             "Transparency: ${(design.transparency * 100).toInt()}%",
