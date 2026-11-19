@@ -871,3 +871,62 @@ private fun savePieces(
         .putString("piece_records", a.toString())
         .apply()
 }
+private fun loadDesigns(
+    prefs: android.content.SharedPreferences
+): Map<String, ScreenDesign> {
+
+    val json = JSONObject(
+        prefs.getString("screen_designs", "{}") ?: "{}"
+    )
+
+    return designScreens.associateWith { screen ->
+        val item = json.optJSONObject(screen)
+
+        if (item == null) {
+            ScreenDesign()
+        } else {
+            ScreenDesign(
+                enabled = item.optBoolean("enabled", true),
+                color1 = item.optLong(
+                    "color1", 0x664D8CA6L
+                ),
+                color2 = item.optLong(
+                    "color2", 0x44334270L
+                ),
+                transparency = item.optDouble(
+                    "transparency", 0.65
+                ).toFloat(),
+                depth = item.optDouble(
+                    "depth", 12.0
+                ).toFloat(),
+                glow = item.optDouble(
+                    "glow", 0.5
+                ).toFloat()
+            )
+        }
+    }
+}
+
+private fun saveDesigns(
+    prefs: android.content.SharedPreferences,
+    designs: Map<String, ScreenDesign>
+) {
+    val json = JSONObject()
+
+    designs.forEach { (screen, design) ->
+        val item = JSONObject()
+
+        item.put("enabled", design.enabled)
+        item.put("color1", design.color1)
+        item.put("color2", design.color2)
+        item.put("transparency", design.transparency)
+        item.put("depth", design.depth)
+        item.put("glow", design.glow)
+
+        json.put(screen, item)
+    }
+
+    prefs.edit()
+        .putString("screen_designs", json.toString())
+        .apply()
+}
