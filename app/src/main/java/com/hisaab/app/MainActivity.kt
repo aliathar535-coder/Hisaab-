@@ -1023,6 +1023,307 @@ selectedPreset?.let { preset ->
 }
 
         Text(
+            "READY-MADE COLOR GALLERY — 30",
+            color = Color(0xFF8FEAFF),
+            fontWeight = FontWeight.Bold
+        )
+
+        Text(
+            "रंग के नमूने को टच करके Preview देखें।",
+            color = Color.LightGray,
+            fontSize = 12.sp
+        )
+
+        colorGallery.chunked(5).forEachIndexed { rowIndex, rowColors ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                rowColors.forEachIndexed { columnIndex, colors ->
+                    val number = rowIndex * 5 + columnIndex + 1
+
+                    Card(
+                        onClick = {
+                            selectedColorPreset = colors
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(55.dp),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    Brush.linearGradient(
+                                        colors.map { Color(it) }
+                                    )
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                "$number",
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+
+                repeat(5 - rowColors.size) {
+                    Spacer(Modifier.weight(1f))
+                }
+            }
+        }
+
+        selectedColorPreset?.let { colors ->
+            Text(
+                "COLOR PREVIEW",
+                color = Color(0xFF8FEAFF),
+                fontWeight = FontWeight.Bold
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(95.dp)
+                    .background(
+                        Brush.linearGradient(
+                            colors.map { Color(it) }
+                        ),
+                        RoundedCornerShape(16.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    "आपका चुना हुआ रंग",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Button(
+                onClick = {
+                    onDesignChange(
+                        selectedScreen,
+                        design.copy(
+                            color1 = colors[0],
+                            color2 = colors[1],
+                            colors = colors
+                        )
+                    )
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("READY-MADE COLOR APPLY करें")
+            }
+        }
+
+        Divider(color = Color(0xFF52718A))
+
+        Text(
+            "MANUAL COLOR STUDIO — 1 से 5 रंग",
+            color = Color(0xFF8FEAFF),
+            fontWeight = FontWeight.Bold
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Button(
+                onClick = {
+                    if (manualColors.size < 5) {
+                        val next = manualColors + 0xFF4D8CA6L
+                        manualColors = next
+                        selectedManualColor = next.lastIndex
+                        manualHex = ""
+                    }
+                },
+                enabled = manualColors.size < 5,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("+ Add Color")
+            }
+
+            OutlinedButton(
+                onClick = {
+                    if (manualColors.size > 1) {
+                        manualColors = manualColors.dropLast(1)
+                        selectedManualColor =
+                            selectedManualColor.coerceAtMost(
+                                manualColors.lastIndex
+                            )
+                        manualHex = ""
+                    }
+                },
+                enabled = manualColors.size > 1,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("− Remove Color")
+            }
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            manualColors.forEachIndexed { index, value ->
+                Card(
+                    onClick = {
+                        selectedManualColor = index
+
+                        val hsv = FloatArray(3)
+                        android.graphics.Color.colorToHSV(
+                            value.toInt(),
+                            hsv
+                        )
+
+                        hue = hsv[0]
+                        saturation = hsv[1]
+                        brightness = hsv[2]
+                        manualHex = value.toString(16)
+                            .takeLast(6).uppercase()
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color(value)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            "${index + 1}",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+        }
+
+        Text(
+            "रंग ${selectedManualColor + 1} — Hue",
+            color = Color.White
+        )
+
+        Slider(
+            value = hue,
+            onValueChange = {
+                hue = it
+                manualHex = ""
+            },
+            valueRange = 0f..360f
+        )
+
+        Text(
+            "Saturation: ${(saturation * 100).toInt()}%",
+            color = Color.White
+        )
+
+        Slider(
+            value = saturation,
+            onValueChange = {
+                saturation = it
+                manualHex = ""
+            },
+            valueRange = 0f..1f
+        )
+
+        Text(
+            "Brightness: ${(brightness * 100).toInt()}%",
+            color = Color.White
+        )
+
+        Slider(
+            value = brightness,
+            onValueChange = {
+                brightness = it
+                manualHex = ""
+            },
+            valueRange = 0f..1f
+        )
+
+        val pickedColor =
+            android.graphics.Color.HSVToColor(
+                floatArrayOf(hue, saturation, brightness)
+            ).toLong() and 0xFFFFFFFFL
+
+        OutlinedTextField(
+            value = manualHex,
+            onValueChange = {
+                manualHex = it.uppercase()
+                    .filter { ch ->
+                        ch in "0123456789ABCDEF"
+                    }.take(6)
+            },
+            label = {
+                Text("अपना HEX रंग लिखें")
+            },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(45.dp)
+                    .background(
+                        Color(
+                            if (manualHex.length == 6) {
+                                ("FF" + manualHex).toLong(16)
+                            } else {
+                                pickedColor
+                            }
+                        ),
+                        RoundedCornerShape(8.dp)
+                    )
+            )
+
+            Button(
+                onClick = {
+                    val chosen = if (manualHex.length == 6) {
+                        ("FF" + manualHex).toLong(16)
+                    } else {
+                        pickedColor
+                    }
+
+                    manualColors = manualColors.toMutableList().also {
+                        it[selectedManualColor] = chosen
+                    }
+                    manualHex = ""
+                }
+            ) {
+                Text("रंग सेव करें")
+            }
+        }
+
+        Button(
+            onClick = {
+                onDesignChange(
+                    selectedScreen,
+                    design.copy(
+                        color1 = manualColors.first(),
+                        color2 = manualColors.getOrElse(1) {
+                            manualColors.first()
+                        },
+                        colors = manualColors
+                    )
+                )
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("मेरे Manual Colors APPLY करें")
+        }
+        
+        Text(
             "किस स्क्रीन का डिजाइन बदलना है?",
             color = Color.LightGray
         )
