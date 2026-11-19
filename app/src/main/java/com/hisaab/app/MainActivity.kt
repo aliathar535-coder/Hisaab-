@@ -62,6 +62,31 @@ private data class ScreenDesign(
     val shading: Float = 0.35f
 )
 
+private data class DesignPreset(
+    val id: String,
+    val name: String,
+    val category: String,
+    val colors: List<Long>,
+    val effect: String,
+    val angle: Float = 135f,
+    val depth: Float = 12f,
+    val glow: Float = 0.4f
+)
+
+private val designCategories = listOf(
+    "Material",
+    "Texture",
+    "3D Shape & Surface",
+    "Light & Effects",
+    "Gradient",
+    "Shading",
+    "Border & Edge",
+    "Shadow",
+    "Glass Effects",
+    "Metallic Effects"
+)
+
+
 
 private val designScreens = listOf(
     "home",
