@@ -1839,7 +1839,10 @@ private fun GlassCard(
                     drawRoundRect(
                         brush = glossBrush,
                         cornerRadius = corner
-                    )                    if (design.gradientType == "spiral") {
+                                        )
+
+                    if (design.gradientType == "spiral") {
+                      
                         drawPath(
                             path = spiralPath,
                             brush = Brush.sweepGradient(
