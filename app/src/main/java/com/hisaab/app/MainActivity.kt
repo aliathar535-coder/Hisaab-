@@ -822,7 +822,48 @@ private fun DesignStudio(
             design.color2.toString(16).takeLast(6).uppercase()
         )
     }
+    
+    var selectedColorPreset by remember {
+        mutableStateOf<List<Long>?>(null)
+    }
 
+    var manualColors by remember(selectedScreen, design.colors) {
+        mutableStateOf(
+            design.colors.take(5).ifEmpty {
+                listOf(design.color1, design.color2)
+            }
+        )
+    }
+
+    var selectedManualColor by remember {
+        mutableIntStateOf(0)
+    }
+
+    var hue by remember { mutableFloatStateOf(210f) }
+    var saturation by remember { mutableFloatStateOf(0.72f) }
+    var brightness by remember { mutableFloatStateOf(0.92f) }
+    var manualHex by remember { mutableStateOf("") }
+
+    val colorGallery = remember {
+        (1..30).map { index ->
+            val baseHue = ((index * 41) % 360).toFloat()
+
+            listOf(
+                android.graphics.Color.HSVToColor(
+                    floatArrayOf(baseHue, 0.78f, 0.96f)
+                ).toLong() and 0xFFFFFFFFL,
+
+                android.graphics.Color.HSVToColor(
+                    floatArrayOf((baseHue + 42f) % 360f, 0.70f, 0.82f)
+                ).toLong() and 0xFFFFFFFFL,
+
+                android.graphics.Color.HSVToColor(
+                    floatArrayOf((baseHue + 190f) % 360f, 0.55f, 0.72f)
+                ).toLong() and 0xFFFFFFFFL
+            )
+        }
+    }
+    
     Column(
         modifier = Modifier
             .fillMaxWidth()
