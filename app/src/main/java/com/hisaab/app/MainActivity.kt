@@ -1,3 +1,4 @@
+
 package com.hisaab.app
 
 import android.os.Bundle
@@ -12,7 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -30,189 +31,825 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-private data class Entry(val title: String, val amount: Double, val income: Boolean, val time: String)
+private data class Entry(
+    val title: String,
+    val amount: Double,
+    val income: Boolean,
+    val time: String
+)
+
+private data class PieceRate(
+    val name: String,
+    val rate: Double
+)
+
+private data class PieceRecord(
+    val name: String,
+    val rate: Double,
+    val quantity: Int,
+    val total: Double,
+    val time: String
+)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { HisaabApp() }
+        setContent {
+            HisaabApp()
+        }
     }
 }
+
+private val bg = Color(0xFF07111F)
+private val glass = Color(0xFF172B43)
+private val mint = Color(0xFF65E6D2)
+private val red = Color(0xFFFF929F)
 
 @Composable
 private fun HisaabApp() {
     val context = LocalContext.current
-    val prefs = remember { context.getSharedPreferences("hisaab_local", 0) }
+    val prefs = remember {
+        context.getSharedPreferences("hisaab_local", 0)
+    }
+
     var entries by remember {
         mutableStateOf(loadEntries(prefs))
     }
-    var showDialog by remember { mutableStateOf(false) }
-    var addIncome by remember { mutableStateOf(true) }
+
+    var rates by remember {
+        mutableStateOf(loadRates(prefs))
+    }
+
+    var records by remember {
+        mutableStateOf(loadPieces(prefs))
+    }
+
+    var page by remember { mutableStateOf(0) }
+    var dialog by remember { mutableStateOf("") }
+
     var title by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
+    var isIncome by remember { mutableStateOf(true) }
 
-    val incomeTotal = entries.filter { it.income }.sumOf { it.amount }
-    val expenseTotal = entries.filter { !it.income }.sumOf { it.amount }
-    val balance = incomeTotal - expenseTotal
+    var pieceName by remember { mutableStateOf("") }
+    var pieceRate by remember { mutableStateOf("") }
+    var selectedPiece by remember { mutableStateOf("") }
+    var quantity by remember { mutableStateOf("") }
 
-    MaterialTheme(colorScheme = darkColorScheme(
-        background = Color(0xFF07111F),
-        surface = Color(0xFF14243A),
-        primary = Color(0xFF65E6D2),
-        onBackground = Color.White,
-        onSurface = Color.White
-    )) {
-        Box(
-            Modifier.fillMaxSize().background(
-                Brush.linearGradient(listOf(Color(0xFF07111F), Color(0xFF102B42), Color(0xFF171B39)))
-            )
+    val income =
+        entries.filter { it.income }.sumOf { it.amount } +
+        records.sumOf { it.total }
+
+    val expense =
+        entries.filter { !it.income }.sumOf { it.amount }
+
+    val balance = income - expense
+
+    val selectedRate =
+        rates.find { it.name == selectedPiece }?.rate ?: 0.0
+
+    val qty = quantity.toIntOrNull() ?: 0
+    val pieceTotal = selectedRate * qty
+
+    MaterialTheme(
+        colorScheme = darkColorScheme(
+            background = bg,
+            surface = glass,
+            primary = mint
+        )
+    ) {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.linearGradient(
+                        listOf(
+                            bg,
+                            Color(0xFF102D48),
+                            Color(0xFF201B43)
+                        )
+                    )
+                )
         ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(18.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp)
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(18.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                item {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Column(Modifier.weight(1f)) {
-                            Text("HISAAB", fontSize = 28.sp, fontWeight = FontWeight.Black, color = Color.White)
-                            Text("आपका रोज़ का पूरा हिसाब", color = Color(0xFFB8C9D9), fontSize = 13.sp)
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        "HISAAB",
+                        fontSize = 27.sp,
+                        fontWeight = FontWeight.Black,
+                        color = Color.White
+                    )
+
+                    Text(
+                        SimpleDateFormat(
+                            "dd MMM yyyy, hh:mm a",
+                            Locale.getDefault()
+                        ).format(Date()),
+                        color = Color.LightGray,
+                        fontSize = 12.sp
+                    )
+                }
+
+                Text(
+                    "● OFFLINE",
+                    color = mint,
+                    fontSize = 11.sp
+                )
+
+                Spacer(Modifier.width(12.dp))
+
+                IconButton(onClick = { page = 3 }) {
+                    Icon(
+                        Icons.Default.Settings,
+                        "Settings",
+                        tint = Color.White
+                    )
+                }
+            }
+
+            TabRow(
+                selectedTabIndex = page,
+                containerColor = Color.Transparent,
+                contentColor = mint
+            ) {
+                listOf(
+                    "होम",
+                    "पीस",
+                    "हिस्ट्री",
+                    "सेटिंग"
+                ).forEachIndexed { i, name ->
+                    Tab(
+                        selected = page == i,
+                        onClick = { page = i },
+                        text = {
+                            Text(name, fontSize = 12.sp)
                         }
-                        Text("● OFFLINE", color = Color(0xFF65E6D2), fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                    }
+                    )
                 }
-                item {
-                    GlassCard(Modifier.fillMaxWidth()) {
-                        Text("कुल बैलेंस", color = Color(0xFFB8C9D9), fontSize = 14.sp)
-                        Spacer(Modifier.height(7.dp))
-                        Text("₹ ${money(balance)}", color = Color.White, fontSize = 34.sp, fontWeight = FontWeight.Bold)
-                        Text(if (balance >= 0) "आपका मौजूदा बचा हुआ पैसा" else "खर्च कमाई से अधिक है",
-                            color = Color(0xFF65E6D2), fontSize = 12.sp)
+            }
+
+            when (page) {
+                0 -> HomePage(
+                    income = income,
+                    expense = expense,
+                    balance = balance,
+                    records = records,
+                    onIncome = {
+                        isIncome = true
+                        title = ""
+                        amount = ""
+                        dialog = "entry"
+                    },
+                    onExpense = {
+                        isIncome = false
+                        title = ""
+                        amount = ""
+                        dialog = "entry"
                     }
-                }
-                item {
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        GlassCard(Modifier.weight(1f)) {
-                            Text("कुल कमाई", color = Color(0xFFB8C9D9), fontSize = 13.sp)
-                            Spacer(Modifier.height(8.dp))
-                            Text("₹ ${money(incomeTotal)}", color = Color(0xFF65E6D2), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                )
+
+                1 -> PiecePage(
+                    rates = rates,
+                    records = records,
+                    selectedPiece = selectedPiece,
+                    onSelect = { selectedPiece = it },
+                    quantity = quantity,
+                    onQuantity = { quantity = it },
+                    selectedRate = selectedRate,
+                    pieceTotal = pieceTotal,
+                    onSave = {
+                        if (
+                            selectedPiece.isNotBlank() &&
+                            qty > 0 &&
+                            selectedRate > 0
+                        ) {
+                            records = records + PieceRecord(
+                                selectedPiece,
+                                selectedRate,
+                                qty,
+                                pieceTotal,
+                                now()
+                            )
+                            savePieces(prefs, records)
+                            quantity = ""
                         }
-                        GlassCard(Modifier.weight(1f)) {
-                            Text("कुल खर्च", color = Color(0xFFB8C9D9), fontSize = 13.sp)
-                            Spacer(Modifier.height(8.dp))
-                            Text("₹ ${money(expenseTotal)}", color = Color(0xFFFF9B9B), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    },
+                    onDeleteRate = { name ->
+                        rates = rates.filterNot {
+                            it.name == name
+                        }
+                        saveRates(prefs, rates)
+
+                        if (selectedPiece == name) {
+                            selectedPiece = ""
                         }
                     }
-                }
-                item {
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Button(
-                            onClick = { addIncome = true; title = ""; amount = ""; showDialog = true },
-                            modifier = Modifier.weight(1f).height(54.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF167D72)),
-                            shape = RoundedCornerShape(18.dp)
-                        ) { Icon(Icons.Default.Add, null); Spacer(Modifier.width(6.dp)); Text("कमाई जोड़ें") }
-                        Button(
-                            onClick = { addIncome = false; title = ""; amount = ""; showDialog = true },
-                            modifier = Modifier.weight(1f).height(54.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9A4355)),
-                            shape = RoundedCornerShape(18.dp)
-                        ) { Icon(Icons.Default.Remove, null); Spacer(Modifier.width(6.dp)); Text("खर्च जोड़ें") }
+                )
+
+                2 -> HistoryPage(
+                    records = records,
+                    entries = entries
+                )
+
+                3 -> SettingsPage(
+                    pieceName = pieceName,
+                    onPieceName = { pieceName = it },
+                    pieceRate = pieceRate,
+                    onPieceRate = { pieceRate = it },
+                    onSaveRate = {
+                        val r = pieceRate.toDoubleOrNull()
+
+                        if (
+                            pieceName.isNotBlank() &&
+                            r != null &&
+                            r > 0
+                        ) {
+                            val updated = rates.filterNot {
+                                it.name.equals(
+                                    pieceName.trim(),
+                                    true
+                                )
+                            }
+
+                            rates = updated + PieceRate(
+                                pieceName.trim(),
+                                r
+                            )
+
+                            saveRates(prefs, rates)
+                            pieceName = ""
+                            pieceRate = ""
+                        }
                     }
+                )
+            }
+        }
+    }
+    
+@Composable
+private fun HomePage(
+    income: Double,
+    expense: Double,
+    balance: Double,
+    records: List<PieceRecord>,
+    onIncome: () -> Unit,
+    onExpense: () -> Unit
+) {
+    LazyColumn(
+        Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(13.dp)
+    ) {
+        item {
+            GlassCard {
+                Text("कुल बैलेंस", color = Color.LightGray)
+                Text(
+                    "₹ ${money(balance)}",
+                    color = Color.White,
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    if (balance >= 0) "आपका बचा हुआ पैसा"
+                    else "खर्च कमाई से अधिक है",
+                    color = mint
+                )
+            }
+        }
+
+        item {
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                GlassCard(Modifier.weight(1f)) {
+                    Text("कुल कमाई", color = Color.LightGray)
+                    Text(
+                        "₹${money(income)}",
+                        color = mint,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
-                item {
-                    Text("हाल की एंट्री", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+
+                GlassCard(Modifier.weight(1f)) {
+                    Text("कुल खर्च", color = Color.LightGray)
+                    Text(
+                        "₹${money(expense)}",
+                        color = red,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
-                if (entries.isEmpty()) {
-                    item { GlassCard(Modifier.fillMaxWidth()) {
-                        Text("अभी कोई एंट्री नहीं है। ऊपर से कमाई या खर्च जोड़ें।", color = Color(0xFFB8C9D9))
-                    } }
+            }
+        }
+
+        item {
+            Button(
+                onClick = onIncome,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(Icons.Default.Add, null)
+                Text("कमाई जोड़ें")
+            }
+        }
+
+        item {
+            Button(
+                onClick = onExpense,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF9A4355)
+                )
+            ) {
+                Text("खर्च जोड़ें")
+            }
+        }
+
+        item {
+            Text(
+                "हाल की पीस एंट्री",
+                color = Color.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        items(records.takeLast(5).reversed()) { record ->
+            GlassCard {
+                Text(
+                    record.name,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    "${record.quantity} पीस × ₹${money(record.rate)}",
+                    color = Color.LightGray
+                )
+                Text(
+                    "₹${money(record.total)}",
+                    color = mint
+                )
+                Text(
+                    record.time,
+                    color = Color.Gray,
+                    fontSize = 11.sp
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun PiecePage(
+    rates: List<PieceRate>,
+    records: List<PieceRecord>,
+    selectedPiece: String,
+    onSelect: (String) -> Unit,
+    quantity: String,
+    onQuantity: (String) -> Unit,
+    selectedRate: Double,
+    pieceTotal: Double,
+    onSave: () -> Unit,
+    onDeleteRate: (String) -> Unit
+) {
+    LazyColumn(
+        Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        item {
+            GlassCard {
+                Text(
+                    "पीस का हिसाब",
+                    color = Color.White,
+                    fontSize = 21.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    "सेव किए हुए पीस का नाम चुनें",
+                    color = Color.LightGray
+                )
+
+                Spacer(Modifier.height(12.dp))
+
+                if (rates.isEmpty()) {
+                    Text(
+                        "पहले सेटिंग में पीस का नाम और रेट सेव करें।",
+                        color = red
+                    )
                 } else {
-                    items(entries.reversed()) { entry ->
-                        GlassCard(Modifier.fillMaxWidth()) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Column(Modifier.weight(1f)) {
-                                    Text(entry.title, color = Color.White, fontWeight = FontWeight.SemiBold)
-                                    Text(entry.time, color = Color(0xFF9FB2C6), fontSize = 11.sp)
+                    rates.forEach { rate ->
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = selectedPiece == rate.name,
+                                onClick = {
+                                    onSelect(rate.name)
                                 }
+                            )
+
+                            Column(Modifier.weight(1f)) {
                                 Text(
-                                    (if (entry.income) "+ " else "− ") + "₹ ${money(entry.amount)}",
-                                    color = if (entry.income) Color(0xFF65E6D2) else Color(0xFFFF9B9B),
-                                    fontWeight = FontWeight.Bold
+                                    rate.name,
+                                    color = Color.White
+                                )
+                                Text(
+                                    "रेट ₹${money(rate.rate)}",
+                                    color = mint,
+                                    fontSize = 12.sp
                                 )
                             }
                         }
                     }
                 }
-                item {
-                    Text("आपका डेटा इसी फोन में सेव होता है। इंटरनेट की जरूरत नहीं।",
-                        color = Color(0xFF8FA5BA), fontSize = 11.sp)
+
+                OutlinedTextField(
+                    value = quantity,
+                    onValueChange = onQuantity,
+                    label = {
+                        Text("कितने पीस बनाए?")
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(Modifier.height(12.dp))
+
+                Text(
+                    "रेट: ₹${money(selectedRate)}",
+                    color = Color.White
+                )
+
+                Text(
+                    "कुल कमाई: ₹${money(pieceTotal)}",
+                    color = mint,
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(Modifier.height(10.dp))
+
+                Button(
+                    onClick = onSave,
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = selectedPiece.isNotBlank() &&
+                        quantity.toIntOrNull()?.let { it > 0 } == true &&
+                        selectedRate > 0
+                ) {
+                    Text("पीस का हिसाब सेव करें")
+                }
+            }
+        }
+
+        item {
+            Text(
+                "सेव किए हुए पीस",
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        items(rates) { rate ->
+            GlassCard {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(Modifier.weight(1f)) {
+                        Text(rate.name, color = Color.White)
+                        Text(
+                            "₹${money(rate.rate)} प्रति पीस",
+                            color = mint
+                        )
+                    }
+
+                    TextButton(
+                        onClick = {
+                            onDeleteRate(rate.name)
+                        }
+                    ) {
+                        Text("हटाएँ", color = red)
+                    }
                 }
             }
         }
     }
+}
 
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = { Text(if (addIncome) "नई कमाई" else "नया खर्च") },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    OutlinedTextField(value = title, onValueChange = { title = it },
-                        label = { Text("विवरण") }, singleLine = true)
-                    OutlinedTextField(value = amount, onValueChange = { amount = it },
-                        label = { Text("रकम (₹)") }, singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal))
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    val value = amount.toDoubleOrNull()
-                    if (title.isNotBlank() && value != null && value > 0) {
-                        val date = SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale("hi", "IN")).format(Date())
-                        entries = entries + Entry(title.trim(), value, addIncome, date)
-                        saveEntries(prefs, entries)
-                        showDialog = false
-                    }
-                }) { Text("सेव करें") }
-            },
-            dismissButton = { TextButton(onClick = { showDialog = false }) { Text("रद्द करें") } }
-        )
+@Composable
+private fun HistoryPage(
+    records: List<PieceRecord>,
+    entries: List<Entry>
+) {
+    LazyColumn(
+        Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        item {
+            Text(
+                "पूरी हिस्ट्री",
+                color = Color.White,
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        items(records.reversed()) { record ->
+            GlassCard {
+                Text(
+                    record.name,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    "${record.quantity} पीस × ₹${money(record.rate)}",
+                    color = Color.LightGray
+                )
+
+                Text(
+                    "कुल ₹${money(record.total)}",
+                    color = mint,
+                    fontSize = 19.sp
+                )
+
+                Text(
+                    record.time,
+                    color = Color.Gray,
+                    fontSize = 11.sp
+                )
+            }
+        }
+
+        items(entries.reversed()) { entry ->
+            GlassCard {
+                Text(entry.title, color = Color.White)
+
+                Text(
+                    (if (entry.income) "+ " else "- ") +
+                        "₹${money(entry.amount)}",
+                    color = if (entry.income) mint else red
+                )
+
+                Text(
+                    entry.time,
+                    color = Color.Gray,
+                    fontSize = 11.sp
+                )
+            }
+        }
     }
 }
 
 @Composable
-private fun GlassCard(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
+private fun SettingsPage(
+    pieceName: String,
+    onPieceName: (String) -> Unit,
+    pieceRate: String,
+    onPieceRate: (String) -> Unit,
+    onSaveRate: () -> Unit
+) {
+    LazyColumn(
+        Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        item {
+            GlassCard {
+                Text(
+                    "सेटिंग",
+                    color = Color.White,
+                    fontSize = 23.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    "पीस के नाम और रेट यहाँ सेव करें।",
+                    color = Color.LightGray
+                )
+            }
+        }
+
+        item {
+            GlassCard {
+                Text(
+                    "नया पीस रेट जोड़ें",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+
+                OutlinedTextField(
+                    value = pieceName,
+                    onValueChange = onPieceName,
+                    label = { Text("पीस का नाम") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = pieceRate,
+                    onValueChange = onPieceRate,
+                    label = { Text("एक पीस का रेट ₹") },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Button(
+                    onClick = onSaveRate,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("रेट सेव करें")
+                }
+            }
+        }
+
+        item {
+            GlassCard {
+                Text(
+                    "आगे के फीचर",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    "फोटो स्टूडियो, घड़ी, डिजाइन स्टूडियो और बैकअप अगले चरणों में जोड़े जाएँगे।",
+                    color = Color.LightGray
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun GlassCard(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+) {
     Column(
-        modifier = modifier
+        modifier
             .background(
-                Brush.linearGradient(listOf(Color(0x553F7894), Color(0x332C416D), Color(0x443C4778))),
-                RoundedCornerShape(24.dp)
+                Brush.linearGradient(
+                    listOf(
+                        Color(0x664D8CA6),
+                        Color(0x44334270)
+                    )
+                ),
+                RoundedCornerShape(23.dp)
             )
-            .border(1.dp, Color(0x668BD7E5), RoundedCornerShape(24.dp))
-            .padding(17.dp),
+            .border(
+                1.dp,
+                Color(0x668BD7E5),
+                RoundedCornerShape(23.dp)
+            )
+            .padding(16.dp),
         content = content
     )
 }
-
-private fun money(value: Double): String = String.format(Locale("en", "IN"), "%,.2f", value)
-
-private fun loadEntries(prefs: android.content.SharedPreferences): List<Entry> {
-    val raw = prefs.getString("entries", "[]") ?: "[]"
-    return try {
-        val array = JSONArray(raw)
-        (0 until array.length()).map { i ->
-            val o = array.getJSONObject(i)
-            Entry(o.getString("title"), o.getDouble("amount"), o.getBoolean("income"), o.getString("time"))
-        }
-    } catch (_: Exception) { emptyList() }
+private fun now(): String {
+    return SimpleDateFormat(
+        "dd MMM yyyy, hh:mm a",
+        Locale.getDefault()
+    ).format(Date())
 }
 
-private fun saveEntries(prefs: android.content.SharedPreferences, entries: List<Entry>) {
-    val array = JSONArray()
-    entries.forEach { e ->
-        array.put(JSONObject().put("title", e.title).put("amount", e.amount)
-            .put("income", e.income).put("time", e.time))
+private fun money(value: Double): String {
+    return String.format(Locale.US, "%,.2f", value)
+}
+
+private fun loadEntries(
+    p: android.content.SharedPreferences
+): List<Entry> {
+    return try {
+        val a = JSONArray(
+            p.getString("entries", "[]")
+        )
+
+        (0 until a.length()).map {
+            val o = a.getJSONObject(it)
+
+            Entry(
+                o.getString("title"),
+                o.getDouble("amount"),
+                o.getBoolean("income"),
+                o.getString("time")
+            )
+        }
+    } catch (_: Exception) {
+        emptyList()
     }
-    prefs.edit().putString("entries", array.toString()).apply()
+}
+
+private fun saveEntries(
+    p: android.content.SharedPreferences,
+    list: List<Entry>
+) {
+    val a = JSONArray()
+
+    list.forEach {
+        a.put(
+            JSONObject()
+                .put("title", it.title)
+                .put("amount", it.amount)
+                .put("income", it.income)
+                .put("time", it.time)
+        )
+    }
+
+    p.edit()
+        .putString("entries", a.toString())
+        .apply()
+}
+
+private fun loadRates(
+    p: android.content.SharedPreferences
+): List<PieceRate> {
+    return try {
+        val a = JSONArray(
+            p.getString("piece_rates", "[]")
+        )
+
+        (0 until a.length()).map {
+            val o = a.getJSONObject(it)
+
+            PieceRate(
+                o.getString("name"),
+                o.getDouble("rate")
+            )
+        }
+    } catch (_: Exception) {
+        emptyList()
+    }
+}
+
+private fun saveRates(
+    p: android.content.SharedPreferences,
+    list: List<PieceRate>
+) {
+    val a = JSONArray()
+
+    list.forEach {
+        a.put(
+            JSONObject()
+                .put("name", it.name)
+                .put("rate", it.rate)
+        )
+    }
+
+    p.edit()
+        .putString("piece_rates", a.toString())
+        .apply()
+}
+
+private fun loadPieces(
+    p: android.content.SharedPreferences
+): List<PieceRecord> {
+    return try {
+        val a = JSONArray(
+            p.getString("piece_records", "[]")
+        )
+
+        (0 until a.length()).map {
+            val o = a.getJSONObject(it)
+
+            PieceRecord(
+                o.getString("name"),
+                o.getDouble("rate"),
+                o.getInt("quantity"),
+                o.getDouble("total"),
+                o.getString("time")
+            )
+        }
+    } catch (_: Exception) {
+        emptyList()
+    }
+}
+
+private fun savePieces(
+    p: android.content.SharedPreferences,
+    list: List<PieceRecord>
+) {
+    val a = JSONArray()
+
+    list.forEach {
+        a.put(
+            JSONObject()
+                .put("name", it.name)
+                .put("rate", it.rate)
+                .put("quantity", it.quantity)
+                .put("total", it.total)
+                .put("time", it.time)
+        )
+    }
+
+    p.edit()
+        .putString("piece_records", a.toString())
+        .apply()
 }
