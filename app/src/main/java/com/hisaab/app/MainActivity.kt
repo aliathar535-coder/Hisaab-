@@ -43,7 +43,24 @@ private data class PieceRate(
     val rate: Double
 )
 
-private data class PieceRecord(
+   
+private data class ScreenDesign(
+    val enabled: Boolean = true,
+    val color1: Long = 0x664D8CA6L,
+    val color2: Long = 0x44334270L,
+    val transparency: Float = 0.65f,
+    val depth: Float = 12f,
+    val glow: Float = 0.5f
+)
+
+private val designScreens = listOf(
+    "home",
+    "pieces",
+    "history",
+    "settings",
+    "settings_menu"
+)
+
     val name: String,
     val rate: Double,
     val quantity: Int,
