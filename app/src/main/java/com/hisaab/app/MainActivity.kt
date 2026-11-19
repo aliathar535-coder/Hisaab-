@@ -1716,11 +1716,24 @@ private fun GlassCard(
 
                 val corner = CornerRadius(23.dp.toPx())
 
-                val baseBrush = Brush.linearGradient(
-                    colors = glassColors,
-                    start = start,
-                    end = end
-                )
+                val baseBrush = when (design.gradientType) {
+    "radial" -> Brush.radialGradient(
+        colors = glassColors,
+        center = Offset(centerX, centerY),
+        radius = size.minDimension / 1.5f
+    )
+
+    "sweep" -> Brush.sweepGradient(
+        colors = glassColors,
+        center = Offset(centerX, centerY)
+    )
+
+    else -> Brush.linearGradient(
+        colors = glassColors,
+        start = start,
+        end = end
+    )
+                }
 
                 val shadeBrush = Brush.linearGradient(
                     colors = listOf(
