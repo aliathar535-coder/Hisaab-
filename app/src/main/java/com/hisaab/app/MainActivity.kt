@@ -871,6 +871,115 @@ private fun DesignStudio(
             color = Color.White,
             fontWeight = FontWeight.Bold
         )
+        Text(
+    "DESIGN GALLERY — 30 STYLES",
+    color = Color(0xFF8FEAFF),
+    fontWeight = FontWeight.Bold
+)
+
+designPresets
+    .filter { it.category == selectedCategory }
+    .chunked(5)
+    .forEach { presetRow ->
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            presetRow.forEach { preset ->
+
+                Card(
+                    onClick = {
+                        selectedPreset = preset
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(65.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.Transparent
+                    )
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.linearGradient(
+                                    preset.colors.map { Color(it) }
+                                )
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            preset.name.substringAfterLast(" "),
+                            color = Color.White,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+
+            repeat(5 - presetRow.size) {
+                Spacer(
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+    }
+
+selectedPreset?.let { preset ->
+
+    Text(
+        "SELECTED: ${preset.name}",
+        color = Color(0xFF8FEAFF),
+        fontWeight = FontWeight.Bold
+    )
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(130.dp),
+        shape = RoundedCornerShape(20.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.linearGradient(
+                        preset.colors.map { Color(it) }
+                    )
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                preset.name,
+                color = Color.White,
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+
+    Button(
+        onClick = {
+            onDesignChange(
+                selectedScreen,
+                design.copy(
+                    color1 = preset.colors[0],
+                    color2 = preset.colors[1],
+                    colors = preset.colors,
+                    gradientAngle = preset.angle,
+                    depth = preset.depth,
+                    glow = preset.glow
+                )
+            )
+        },
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text("इस स्क्रीन पर APPLY करें")
+    }
+}
 
         Text(
             "किस स्क्रीन का डिजाइन बदलना है?",
