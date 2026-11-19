@@ -289,7 +289,9 @@ val updateScreenDesign: (String, ScreenDesign) -> Unit =
                 )
 
                 3 -> SettingsPage(
-                    pieceName = pieceName,
+    designs = designs,
+    onDesignChange = updateScreenDesign,
+    pieceName = pieceName,
                     onPieceName = { pieceName = it },
                     pieceRate = pieceRate,
                     onPieceRate = { pieceRate = it },
@@ -631,7 +633,7 @@ private fun HistoryPage(
                         "₹${money(entry.amount)}",
                     color = if (entry.income) mint else red
                 )
-
+                
                 Text(
                     entry.time,
                     color = Color.Gray,
@@ -644,6 +646,8 @@ private fun HistoryPage(
 
 @Composable
 private fun SettingsPage(
+    designs: Map<String, ScreenDesign>,
+    onDesignChange: (String, ScreenDesign) -> Unit,
     pieceName: String,
     onPieceName: (String) -> Unit,
     pieceRate: String,
