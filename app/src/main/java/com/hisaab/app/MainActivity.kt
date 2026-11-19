@@ -769,8 +769,8 @@ private fun DesignStudio(
     designs: Map<String, ScreenDesign>,
     onDesignChange: (String, ScreenDesign) -> Unit
 ) {
-    var selectedScreen by remember {
-        mutableStateOf("home")
+        var selectedCategory by remember {
+        mutableStateOf("Material")
     }
 
     var menuExpanded by remember {
@@ -806,10 +806,37 @@ private fun DesignStudio(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+                Text(
+            "DESIGN CATEGORIES",
+            color = Color(0xFF8FEAFF),
+            fontWeight = FontWeight.Bold
+        )
+
+        ScrollableTabRow(
+            selectedTabIndex = designCategories.indexOf(selectedCategory),
+            containerColor = Color.Transparent,
+            contentColor = Color(0xFF65E6D2),
+            edgePadding = 0.dp
+        ) {
+            designCategories.forEachIndexed { index, category ->
+                Tab(
+                    selected = selectedCategory == category,
+                    onClick = {
+                        selectedCategory = category
+                    },
+                    text = {
+                        Text(
+                            category,
+                            fontSize = 11.sp
+                        )
+                    }
+                )
+            }
+        }
+
         Text(
-            "3D LIQUID GLASS STUDIO",
+            "चुनी हुई कैटेगरी: $selectedCategory",
             color = Color.White,
-            fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
 
