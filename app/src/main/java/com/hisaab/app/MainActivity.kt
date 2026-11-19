@@ -1194,8 +1194,17 @@ private fun loadDesigns(
                     "depth", 12.0
                 ).toFloat(),
                 glow = item.optDouble(
-                    "glow", 0.5
-                ).toFloat()
+    "glow", 0.5
+).toFloat(),
+gradientAngle = item.optDouble(
+    "gradientAngle", 45.0
+).toFloat(),
+gradientType = item.optString(
+    "gradientType", "linear"
+),
+shading = item.optDouble(
+    "shading", 0.35
+).toFloat()
             )
         }
     }
