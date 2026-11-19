@@ -1751,7 +1751,12 @@ private fun GlassCard(
         start = start,
         end = end
     )
-    
+       "diagonal" -> Brush.linearGradient(
+        colors = glassColors,
+        start = Offset.Zero,
+        end = Offset(size.width, size.height)
+    ) 
+ 
     else -> Brush.linearGradient(
         colors = glassColors,
         start = start,
