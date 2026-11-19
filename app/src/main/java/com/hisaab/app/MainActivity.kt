@@ -778,7 +778,9 @@ private fun DesignStudio(
     }
 
     val design = designs[selectedScreen] ?: ScreenDesign()
-
+    var selectedScreen by remember {
+    mutableStateOf("home")
+    }
     var colorOne by remember(selectedScreen, design.color1) {
         mutableStateOf(
             design.color1.toString(16).takeLast(6).uppercase()
