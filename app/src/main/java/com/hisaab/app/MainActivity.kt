@@ -1771,63 +1771,15 @@ private fun GlassCard(
 
                 val corner = CornerRadius(23.dp.toPx())
 
-                val baseBrush = when (design.gradientType) {
-    "radial" -> Brush.radialGradient(
-        colors = glassColors,
-        center = Offset(centerX, centerY),
-        radius = size.minDimension / 1.5f
-    )
-
-    "sweep" -> Brush.sweepGradient(
-        colors = glassColors,
-        center = Offset(centerX, centerY)
-    )
-
-        "horizontal" -> Brush.linearGradient(
-        colors = glassColors,
-        start = Offset(0f, centerY),
-        end = Offset(size.width, centerY)
-    )
-
-    "vertical" -> Brush.linearGradient(
-        colors = glassColors,
-        start = Offset(centerX, 0f),
-        end = Offset(centerX, size.height)
-    )
-   
-         "mirror" -> Brush.linearGradient(
-        colors = glassColors + glassColors.reversed(),
-        start = start,
-        end = end
-    )
-
-    "reflected" -> Brush.linearGradient(
-        colors = glassColors.reversed(),
-        start = start,
-        end = end
-    )
-       "diagonal" -> Brush.linearGradient(
-        colors = glassColors,
-        start = Offset.Zero,
-        end = Offset(size.width, size.height)
-    ) 
-     
-        "diamond" -> Brush.radialGradient(
-        colors = glassColors,
-        center = Offset(centerX, centerY),
-        radius = size.maxDimension / 1.2f
-    )
-       "multi-stop" -> Brush.linearGradient(
-        colors = glassColors,
-        start = start,
-        end = end
-    )
-    else -> Brush.linearGradient(
-        colors = glassColors,
-        start = start,
-        end = end
-    )
-                }
+                                val baseBrush = makeGradientBrush(
+                    type = design.gradientType,
+                    colors = glassColors,
+                    start = start,
+                    end = end,
+                    center = Offset(centerX, centerY),
+                    width = size.width,
+                    height = size.height
+                )
 
                 val shadeBrush = Brush.linearGradient(
                     colors = listOf(
