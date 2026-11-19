@@ -225,7 +225,8 @@ val updateScreenDesign: (String, ScreenDesign) -> Unit =
 
             when (page) {
                 0 -> HomePage(
-                    income = income,
+    design = designs["home"] ?: ScreenDesign(),
+    income = income,
                     expense = expense,
                     balance = balance,
                     records = records,
@@ -323,6 +324,7 @@ val updateScreenDesign: (String, ScreenDesign) -> Unit =
 }    
 @Composable
 private fun HomePage(
+    design: ScreenDesign,
     income: Double,
     expense: Double,
     balance: Double,
