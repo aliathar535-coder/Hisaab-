@@ -800,6 +800,10 @@ private fun DesignStudio(
     var selectedCategory by remember {
         mutableStateOf("Material")
     }
+   
+    var selectedPreset by remember {
+    mutableStateOf<DesignPreset?>(null)
+    }
 
     var menuExpanded by remember {
         mutableStateOf(false)
