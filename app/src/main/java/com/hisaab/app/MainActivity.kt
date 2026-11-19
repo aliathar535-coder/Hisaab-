@@ -45,6 +45,7 @@ private data class PieceRate(
 )
 
    
+
 private data class ScreenDesign(
     val enabled: Boolean = true,
     val color1: Long = 0x664D8CA6L,
@@ -55,8 +56,12 @@ private data class ScreenDesign(
     ),
     val transparency: Float = 0.65f,
     val depth: Float = 12f,
-    val glow: Float = 0.5f
+    val glow: Float = 0.5f,
+    val gradientAngle: Float = 45f,
+    val gradientType: String = "linear",
+    val shading: Float = 0.35f
 )
+
 
 private val designScreens = listOf(
     "home",
