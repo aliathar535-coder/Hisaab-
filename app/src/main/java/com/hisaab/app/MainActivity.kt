@@ -955,20 +955,17 @@ private fun GlassCard(
 ) {
     val shape = RoundedCornerShape(23.dp)
 
-    val firstColor = if (design.enabled) {
-        Color(design.color1).copy(
-            alpha = design.transparency.coerceIn(0f, 1f)
-        )
+        val glassColors = if (design.enabled) {
+        design.colors.map {
+            Color(it).copy(
+                alpha = design.transparency.coerceIn(0f, 1f)
+            )
+        }
     } else {
-        Color(0x664D8CA6)
-    }
-
-    val secondColor = if (design.enabled) {
-        Color(design.color2).copy(
-            alpha = design.transparency.coerceIn(0f, 1f)
+        listOf(
+            Color(0x664D8CA6),
+            Color(0x44334270)
         )
-    } else {
-        Color(0x44334270)
     }
 
     val glowAmount = design.glow.coerceIn(0f, 1f)
