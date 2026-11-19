@@ -1231,6 +1231,9 @@ private fun saveDesigns(
         item.put("transparency", design.transparency)
         item.put("depth", design.depth)
         item.put("glow", design.glow)
+        item.put("gradientAngle", design.gradientAngle)
+item.put("gradientType", design.gradientType)
+item.put("shading", design.shading)
 
         json.put(screen, item)
     }
