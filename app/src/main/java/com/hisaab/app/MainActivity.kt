@@ -1756,7 +1756,13 @@ private fun GlassCard(
         start = Offset.Zero,
         end = Offset(size.width, size.height)
     ) 
- 
+     
+        "diamond" -> Brush.radialGradient(
+        colors = glassColors,
+        center = Offset(centerX, centerY),
+        radius = size.maxDimension / 1.2f
+    )
+   
     else -> Brush.linearGradient(
         colors = glassColors,
         start = start,
