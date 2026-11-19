@@ -982,13 +982,15 @@ private fun GlassCard(
             )
             .background(
                 Brush.linearGradient(
-                    listOf(
-                        firstColor,
-                        Color.White.copy(
-                            alpha = if (design.enabled) {
-                                0.12f * glowAmount
-                            } else {
-                                0f
+                    glassColors + listOf(
+    Color.White.copy(
+        alpha = if (design.enabled) {
+            0.12f * glowAmount
+        } else {
+            0f
+        }
+    )
+)
                             }
                         ),
                         secondColor
