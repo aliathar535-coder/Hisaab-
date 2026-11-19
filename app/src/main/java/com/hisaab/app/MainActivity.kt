@@ -1040,9 +1040,19 @@ private fun DesignStudio(
                     .fillMaxWidth()
                     .height(115.dp)
                     .background(
-                        Brush.linearGradient(
-                            style.colors.map { Color(it) }
-                        ),
+                        when (style.effect) {
+    "radial" -> Brush.radialGradient(
+        colors = style.colors.map { Color(it) }
+    )
+
+    "sweep" -> Brush.sweepGradient(
+        colors = style.colors.map { Color(it) }
+    )
+
+    else -> Brush.linearGradient(
+        colors = style.colors.map { Color(it) }
+    )
+},
                         RoundedCornerShape(16.dp)
                     ),
                 contentAlignment = Alignment.Center
