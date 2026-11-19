@@ -659,7 +659,12 @@ private fun SettingsPage(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        item {
+               item {
+            DesignStudio(
+                designs = designs,
+                onDesignChange = onDesignChange
+            )
+               } item {
             GlassCard {
                 Text(
                     "सेटिंग",
@@ -725,6 +730,219 @@ private fun SettingsPage(
     }
 }
 
+@Composable
+private fun DesignStudio(
+    designs: Map<String, ScreenDesign>,
+    onDesignChange: (String, ScreenDesign) -> Unit
+) {
+    var selectedScreen by remember {
+        mutableStateOf("home")
+    }
+
+    var menuExpanded by remember {
+        mutableStateOf(false)
+    }
+
+    val design = designs[selectedScreen] ?: ScreenDesign()
+
+    var colorOne by remember(selectedScreen, design.color1) {
+        mutableStateOf(
+            design.color1.toString(16).takeLast(6).uppercase()
+        )
+    }
+
+    var colorTwo by remember(selectedScreen, design.color2) {
+        mutableStateOf(
+            design.color2.toString(16).takeLast(6).uppercase()
+        )
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                Color(0xFF172B43),
+                RoundedCornerShape(22.dp)
+            )
+            .border(
+                1.dp,
+                Color(0xFF70DDF5),
+                RoundedCornerShape(22.dp)
+            )
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Text(
+            "3D LIQUID GLASS STUDIO",
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        Text(
+            "किस स्क्रीन का डिजाइन बदलना है?",
+            color = Color.LightGray
+        )
+
+        Button(
+            onClick = { menuExpanded = true },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                when (selectedScreen) {
+                    "home" -> "Home Dashboard"
+                    "pieces" -> "Pieces Screen"
+                    "history" -> "History Screen"
+                    "settings" -> "Settings Screen"
+                    else -> "Settings Menu / Icon"
+                }
+            )
+        }
+
+        DropdownMenu(
+            expanded = menuExpanded,
+            onDismissRequest = { menuExpanded = false }
+        ) {
+            designScreens.forEach { screen ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            when (screen) {
+                                "home" -> "Home Dashboard"
+                                "pieces" -> "Pieces Screen"
+                                "history" -> "History Screen"
+                                "settings" -> "Settings Screen"
+                                else -> "Settings Menu / Icon"
+                            }
+                        )
+                    },
+                    onClick = {
+                        selectedScreen = screen
+                        menuExpanded = false
+                    }
+                )
+            }
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                "3D Glass चालू करें",
+                color = Color.White,
+                modifier = Modifier.weight(1f)
+            )
+
+            Switch(
+                checked = design.enabled,
+                onCheckedChange = {
+                    onDesignChange(
+                        selectedScreen,
+                        design.copy(enabled = it)
+                    )
+                }
+            )
+        }
+
+        Text("पहला रंग (HEX)", color = Color.White)
+
+        OutlinedTextField(
+            value = colorOne,
+            onValueChange = {
+                colorOne = it.uppercase().filter { c ->
+                    c in "0123456789ABCDEF"
+                }.take(6)
+
+                if (colorOne.length == 6) {
+                    val value = ("FF" + colorOne).toLong(16)
+                    onDesignChange(
+                        selectedScreen,
+                        design.copy(color1 = value)
+                    )
+                }
+            },
+            label = { Text("जैसे FF4488") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+
+        Text("दूसरा रंग (HEX)", color = Color.White)
+
+        OutlinedTextField(
+            value = colorTwo,
+            onValueChange = {
+                colorTwo = it.uppercase().filter { c ->
+                    c in "0123456789ABCDEF"
+                }.take(6)
+
+                if (colorTwo.length == 6) {
+                    val value = ("FF" + colorTwo).toLong(16)
+                    onDesignChange(
+                        selectedScreen,
+                        design.copy(color2 = value)
+                    )
+                }
+            },
+            label = { Text("जैसे 3355AA") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+
+        Text(
+            "Transparency: ${(design.transparency * 100).toInt()}%",
+            color = Color.White
+        )
+
+        Slider(
+            value = design.transparency,
+            onValueChange = {
+                onDesignChange(
+                    selectedScreen,
+                    design.copy(transparency = it)
+                )
+            },
+            valueRange = 0.1f..1f
+        )
+
+        Text(
+            "3D Depth: ${design.depth.toInt()}",
+            color = Color.White
+        )
+
+        Slider(
+            value = design.depth,
+            onValueChange = {
+                onDesignChange(
+                    selectedScreen,
+                    design.copy(depth = it)
+                )
+            },
+            valueRange = 0f..30f
+        )
+
+        Text(
+            "Glow: ${(design.glow * 100).toInt()}%",
+            color = Color.White
+        )
+
+        Slider(
+            value = design.glow,
+            onValueChange = {
+                onDesignChange(
+                    selectedScreen,
+                    design.copy(glow = it)
+                )
+            },
+            valueRange = 0f..1f
+        )
+
+        Text(
+            "इस स्क्रीन की डिजाइन अलग सेव होती है।",
+            color = Color(0xFF8FEAFF),
+            fontSize = 12.sp
+        )
+    }
+}
 @Composable
 private fun GlassCard(
     modifier: Modifier = Modifier,
