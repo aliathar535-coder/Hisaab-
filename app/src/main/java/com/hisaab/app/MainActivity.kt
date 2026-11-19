@@ -102,6 +102,18 @@ private fun HisaabApp() {
         mutableStateOf(loadPieces(prefs))
     }
 
+   
+var designs by remember {
+    mutableStateOf(loadDesigns(prefs))
+}
+
+val updateScreenDesign: (String, ScreenDesign) -> Unit =
+    { screen, design ->
+        val updated = designs + (screen to design)
+        designs = updated
+        saveDesigns(prefs, updated)
+    }
+    
     var page by remember { mutableStateOf(0) }
     var dialog by remember { mutableStateOf("") }
 
