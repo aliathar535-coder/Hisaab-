@@ -85,7 +85,31 @@ private val designCategories = listOf(
     "Glass Effects",
     "Metallic Effects"
 )
+private val designPresets = designCategories.flatMapIndexed { categoryIndex, category ->
+    (1..30).map { index ->
+        val hue1 = ((index * 37 + categoryIndex * 29) % 360).toFloat()
+        val hue2 = (hue1 + 55f) % 360f
 
+        val color1 = android.graphics.Color.HSVToColor(
+            floatArrayOf(hue1, 0.72f, 0.95f)
+        ).toLong() and 0xFFFFFFFFL
+
+        val color2 = android.graphics.Color.HSVToColor(
+            floatArrayOf(hue2, 0.68f, 0.78f)
+        ).toLong() and 0xFFFFFFFFL
+
+        DesignPreset(
+            id = "${categoryIndex}_${index}",
+            name = "$category ${index.toString().padStart(2, '0')}",
+            category = category,
+            colors = listOf(color1, color2),
+            effect = category,
+            angle = (index * 12f) % 360f,
+            depth = 5f + (index % 6) * 5f,
+            glow = (index % 10) / 10f
+        )
+    }
+}
 
 
 private val designScreens = listOf(
