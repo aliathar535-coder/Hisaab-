@@ -1150,6 +1150,7 @@ private fun savePieces(
         .putString("piece_records", a.toString())
         .apply()
 }
+
 private fun loadDesigns(
     prefs: android.content.SharedPreferences
 ): Map<String, ScreenDesign> {
@@ -1164,14 +1165,23 @@ private fun loadDesigns(
         if (item == null) {
             ScreenDesign()
         } else {
+            val savedColors = item.optJSONArray("colors")
+
+            val colorList = savedColors?.let { array ->
+                (0 until array.length())
+                    .map { array.optLong(it) }
+                    .take(5)
+            }?.takeIf { it.isNotEmpty() }
+                ?: listOf(
+                    item.optLong("color1", 0xFF4D8CA6L),
+                    item.optLong("color2", 0xFF334270L)
+                )
+
             ScreenDesign(
                 enabled = item.optBoolean("enabled", true),
-                color1 = item.optLong(
-                    "color1", 0x664D8CA6L
-                ),
-                color2 = item.optLong(
-                    "color2", 0x44334270L
-                ),
+                color1 = item.optLong("color1", 0x664D8CA6L),
+                color2 = item.optLong("color2", 0x44334270L),
+                colors = colorList,
                 transparency = item.optDouble(
                     "transparency", 0.65
                 ).toFloat(),
@@ -1194,10 +1204,16 @@ private fun saveDesigns(
 
     designs.forEach { (screen, design) ->
         val item = JSONObject()
+        val colorArray = JSONArray()
+
+        design.colors.take(5).forEach { color ->
+            colorArray.put(color)
+        }
 
         item.put("enabled", design.enabled)
         item.put("color1", design.color1)
         item.put("color2", design.color2)
+        item.put("colors", colorArray)
         item.put("transparency", design.transparency)
         item.put("depth", design.depth)
         item.put("glow", design.glow)
