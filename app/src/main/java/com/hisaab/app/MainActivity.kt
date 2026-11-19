@@ -1137,6 +1137,39 @@ selectedPreset?.let { preset ->
             },
             valueRange = 0f..1f
         )
+        Text(
+    "GRADIENT ANGLE: ${design.gradientAngle.toInt()}°",
+    color = Color.White,
+    fontWeight = FontWeight.Bold
+)
+
+Slider(
+    value = design.gradientAngle,
+    onValueChange = {
+        onDesignChange(
+            selectedScreen,
+            design.copy(gradientAngle = it)
+        )
+    },
+    valueRange = 0f..360f
+)
+
+Text(
+    "3D SHADING: ${(design.shading * 100).toInt()}%",
+    color = Color.White,
+    fontWeight = FontWeight.Bold
+)
+
+Slider(
+    value = design.shading,
+    onValueChange = {
+        onDesignChange(
+            selectedScreen,
+            design.copy(shading = it)
+        )
+    },
+    valueRange = 0f..1f
+)
 
         Text(
             "इस स्क्रीन की डिजाइन अलग सेव होती है।",
