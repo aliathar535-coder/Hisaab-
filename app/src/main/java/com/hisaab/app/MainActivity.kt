@@ -18,6 +18,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -338,7 +339,7 @@ private fun HomePage(
         verticalArrangement = Arrangement.spacedBy(13.dp)
     ) {
         item {
-            GlassCard {
+            GlassCard(design = design) {
                 Text("कुल बैलेंस", color = Color.LightGray)
                 Text(
                     "₹ ${money(balance)}",
@@ -356,7 +357,7 @@ private fun HomePage(
 
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                GlassCard(Modifier.weight(1f)) {
+                GlassCard(modifier = Modifier.weight(1f), design = design) {
                     Text("कुल कमाई", color = Color.LightGray)
                     Text(
                         "₹${money(income)}",
@@ -365,7 +366,7 @@ private fun HomePage(
                     )
                 }
 
-                GlassCard(Modifier.weight(1f)) {
+                GlassCard(modifier = Modifier.weight(1f), design = design) {
                     Text("कुल खर्च", color = Color.LightGray)
                     Text(
                         "₹${money(expense)}",
@@ -408,7 +409,7 @@ private fun HomePage(
         }
 
         items(records.takeLast(5).reversed()) { record ->
-            GlassCard {
+            GlassCard(design = design) {
                 Text(
                     record.name,
                     color = Color.White,
@@ -723,23 +724,65 @@ private fun SettingsPage(
 @Composable
 private fun GlassCard(
     modifier: Modifier = Modifier,
+    design: ScreenDesign = ScreenDesign(),
     content: @Composable ColumnScope.() -> Unit
 ) {
+    val shape = RoundedCornerShape(23.dp)
+
+    val firstColor = if (design.enabled) {
+        Color(design.color1).copy(
+            alpha = design.transparency.coerceIn(0f, 1f)
+        )
+    } else {
+        Color(0x664D8CA6)
+    }
+
+    val secondColor = if (design.enabled) {
+        Color(design.color2).copy(
+            alpha = design.transparency.coerceIn(0f, 1f)
+        )
+    } else {
+        Color(0x44334270)
+    }
+
+    val glowAmount = design.glow.coerceIn(0f, 1f)
+
     Column(
         modifier
+            .shadow(
+                elevation = if (design.enabled) {
+                    design.depth.coerceIn(0f, 30f).dp
+                } else {
+                    0.dp
+                },
+                shape = shape
+            )
             .background(
                 Brush.linearGradient(
                     listOf(
-                        Color(0x664D8CA6),
-                        Color(0x44334270)
+                        firstColor,
+                        Color.White.copy(
+                            alpha = if (design.enabled) {
+                                0.12f * glowAmount
+                            } else {
+                                0f
+                            }
+                        ),
+                        secondColor
                     )
                 ),
-                RoundedCornerShape(23.dp)
+                shape
             )
             .border(
-                1.dp,
-                Color(0x668BD7E5),
-                RoundedCornerShape(23.dp)
+                1.5.dp,
+                Color(0xFFB9F3FF).copy(
+                    alpha = if (design.enabled) {
+                        0.25f + (glowAmount * 0.65f)
+                    } else {
+                        0.35f
+                    }
+                ),
+                shape
             )
             .padding(16.dp),
         content = content
