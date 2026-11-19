@@ -1762,7 +1762,11 @@ private fun GlassCard(
         center = Offset(centerX, centerY),
         radius = size.maxDimension / 1.2f
     )
-   
+       "multi-stop" -> Brush.linearGradient(
+        colors = glassColors,
+        start = start,
+        end = end
+    )
     else -> Brush.linearGradient(
         colors = glassColors,
         start = start,
