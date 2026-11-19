@@ -1836,10 +1836,10 @@ private fun GlassCard(
                         cornerRadius = corner
                     )
 
-                    drawRoundRect(
+                                        drawRoundRect(
                         brush = glossBrush,
                         cornerRadius = corner
-                                        )
+                    )
 
                     if (design.gradientType == "spiral") {
                       
