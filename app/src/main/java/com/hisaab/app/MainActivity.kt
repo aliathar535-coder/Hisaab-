@@ -811,7 +811,67 @@ private fun DesignStudio(
     var menuExpanded by remember {
         mutableStateOf(false)
     }
+    
+    var selectedGradientStyle by remember {
+        mutableStateOf<DesignPreset?>(null)
+    }
 
+    val gradientFamilies = listOf(
+        "Linear" to "linear",
+        "Radial" to "radial",
+        "Sweep" to "sweep",
+        "Diagonal" to "diagonal",
+        "Horizontal" to "horizontal",
+        "Vertical" to "vertical",
+        "Mirror" to "mirror",
+        "Reflected" to "reflected",
+        "Diamond" to "diamond",
+        "Spiral" to "spiral",
+        "Mesh" to "mesh",
+        "Aurora" to "aurora",
+        "Liquid" to "liquid",
+        "Prism" to "prism",
+        "Multi-Stop" to "multi-stop",
+        "Wave" to "wave",
+        "Vortex" to "vortex",
+        "Neon" to "neon",
+        "Galaxy" to "galaxy",
+        "Sunset" to "sunset",
+        "Ocean" to "ocean",
+        "Flame" to "flame",
+        "Rainbow" to "rainbow",
+        "Chrome" to "chrome",
+        "Pearl" to "pearl"
+    )
+
+    val gradientStyles = remember {
+        (1..50).map { index ->
+            val family = gradientFamilies[(index - 1) / 2]
+            val variant = if (index % 2 == 0) 2 else 1
+
+            val hue1 = ((index * 31) % 360).toFloat()
+            val hue2 = (hue1 + 65f) % 360f
+            val hue3 = (hue1 + 155f) % 360f
+
+            val colors = listOf(hue1, hue2, hue3).map { hue ->
+                android.graphics.Color.HSVToColor(
+                    floatArrayOf(hue, 0.78f, 0.95f)
+                ).toLong() and 0xFFFFFFFFL
+            }
+
+            DesignPreset(
+                id = "gradient_$index",
+                name = "${family.first} $variant",
+                category = "Gradient",
+                colors = colors,
+                effect = family.second,
+                angle = ((index * 17) % 360).toFloat(),
+                depth = 8f + (index % 5) * 4f,
+                glow = (index % 10) / 10f
+            )
+        }
+    }
+    
     val design = designs[selectedScreen] ?: ScreenDesign()
     
     var colorOne by remember(selectedScreen, design.color1) {
