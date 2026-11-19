@@ -49,6 +49,10 @@ private data class ScreenDesign(
     val enabled: Boolean = true,
     val color1: Long = 0x664D8CA6L,
     val color2: Long = 0x44334270L,
+    val colors: List<Long> = listOf(
+        0xFF4D8CA6L,
+        0xFF334270L
+    ),
     val transparency: Float = 0.65f,
     val depth: Float = 12f,
     val glow: Float = 0.5f
