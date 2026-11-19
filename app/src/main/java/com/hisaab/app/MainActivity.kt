@@ -991,10 +991,7 @@ private fun GlassCard(
         }
     )
 )
-                            }
-                        ),
-                        secondColor
-                    )
+                    
                 ),
                 shape
             )
