@@ -290,7 +290,7 @@ private fun HisaabApp() {
             }
         }
     }
-    
+}    
 @Composable
 private fun HomePage(
     income: Double,
