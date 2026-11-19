@@ -769,8 +769,8 @@ private fun DesignStudio(
     designs: Map<String, ScreenDesign>,
     onDesignChange: (String, ScreenDesign) -> Unit
 ) {
-        var selectedScreen by remember {
-        mutableStateOf("home")
+    var selectedScreen by remember {
+       mutableStateOf("home")
     }
 
     var selectedCategory by remember {
