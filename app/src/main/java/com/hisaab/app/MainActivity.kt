@@ -769,6 +769,9 @@ private fun DesignStudio(
     designs: Map<String, ScreenDesign>,
     onDesignChange: (String, ScreenDesign) -> Unit
 ) {
+    var selectedScreen by remember {
+    mutableStateOf("home")
+    }
         var selectedCategory by remember {
         mutableStateOf("Material")
     }
@@ -778,9 +781,7 @@ private fun DesignStudio(
     }
 
     val design = designs[selectedScreen] ?: ScreenDesign()
-    var selectedScreen by remember {
-    mutableStateOf("home")
-    }
+
     var colorOne by remember(selectedScreen, design.color1) {
         mutableStateOf(
             design.color1.toString(16).takeLast(6).uppercase()
