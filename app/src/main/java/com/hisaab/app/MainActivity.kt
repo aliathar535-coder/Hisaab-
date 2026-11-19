@@ -18,6 +18,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -1478,6 +1481,7 @@ Slider(
         )
     }
 }
+
 @Composable
 private fun GlassCard(
     modifier: Modifier = Modifier,
@@ -1486,11 +1490,13 @@ private fun GlassCard(
 ) {
     val shape = RoundedCornerShape(23.dp)
 
-        val glassColors = if (design.enabled) {
+    val glassColors = if (design.enabled) {
         design.colors.map {
             Color(it).copy(
                 alpha = design.transparency.coerceIn(0f, 1f)
             )
+        }.ifEmpty {
+            listOf(Color(0xFF4D8CA6), Color(0xFF334270))
         }
     } else {
         listOf(
@@ -1500,6 +1506,11 @@ private fun GlassCard(
     }
 
     val glowAmount = design.glow.coerceIn(0f, 1f)
+    val shadeAmount = if (design.enabled) {
+        design.shading.coerceIn(0f, 1f)
+    } else {
+        0f
+    }
 
     Column(
         modifier
@@ -1511,21 +1522,72 @@ private fun GlassCard(
                 },
                 shape = shape
             )
-            .background(
-                Brush.linearGradient(
-                    glassColors + listOf(
-    Color.White.copy(
-        alpha = if (design.enabled) {
-            0.12f * glowAmount
-        } else {
-            0f
-        }
-    )
-)
-                    
-                ),
-                shape
-            )
+            .drawWithCache {
+                val angle = Math.toRadians(
+                    design.gradientAngle.toDouble()
+                )
+
+                val dx = kotlin.math.cos(angle).toFloat() *
+                    size.width / 2f
+                val dy = kotlin.math.sin(angle).toFloat() *
+                    size.height / 2f
+
+                val centerX = size.width / 2f
+                val centerY = size.height / 2f
+
+                val start = Offset(centerX - dx, centerY - dy)
+                val end = Offset(centerX + dx, centerY + dy)
+
+                val corner = CornerRadius(23.dp.toPx())
+
+                val baseBrush = Brush.linearGradient(
+                    colors = glassColors,
+                    start = start,
+                    end = end
+                )
+
+                val shadeBrush = Brush.linearGradient(
+                    colors = listOf(
+                        Color.White.copy(
+                            alpha = 0.38f * shadeAmount
+                        ),
+                        Color.Transparent,
+                        Color.Black.copy(
+                            alpha = 0.32f * shadeAmount
+                        )
+                    ),
+                    start = Offset.Zero,
+                    end = Offset(size.width, size.height)
+                )
+
+                val glossBrush = Brush.linearGradient(
+                    colors = listOf(
+                        Color.White.copy(
+                            alpha = 0.22f * glowAmount
+                        ),
+                        Color.Transparent
+                    ),
+                    start = Offset.Zero,
+                    end = Offset(0f, size.height * 0.55f)
+                )
+
+                onDrawBehind {
+                    drawRoundRect(
+                        brush = baseBrush,
+                        cornerRadius = corner
+                    )
+
+                    drawRoundRect(
+                        brush = shadeBrush,
+                        cornerRadius = corner
+                    )
+
+                    drawRoundRect(
+                        brush = glossBrush,
+                        cornerRadius = corner
+                    )
+                }
+            }
             .border(
                 1.5.dp,
                 Color(0xFFB9F3FF).copy(
