@@ -61,6 +61,7 @@ private val designScreens = listOf(
     "settings_menu"
 )
 
+ private data class PieceRecord( 
     val name: String,
     val rate: Double,
     val quantity: Int,
