@@ -1740,7 +1740,19 @@ private fun GlassCard(
         end = Offset(centerX, size.height)
     )
    
-     else -> Brush.linearGradient(
+         "mirror" -> Brush.linearGradient(
+        colors = glassColors + glassColors.reversed(),
+        start = start,
+        end = end
+    )
+
+    "reflected" -> Brush.linearGradient(
+        colors = glassColors.reversed(),
+        start = start,
+        end = end
+    )
+    
+    else -> Brush.linearGradient(
         colors = glassColors,
         start = start,
         end = end
