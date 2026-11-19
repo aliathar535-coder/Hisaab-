@@ -1805,7 +1805,26 @@ private fun GlassCard(
                     start = Offset.Zero,
                     end = Offset(0f, size.height * 0.55f)
                 )
+                val spiralPath = androidx.compose.ui.graphics.Path().apply {
+                    val cx = size.width / 2f
+                    val cy = size.height / 2f
+                    val maxRadius = size.minDimension * 0.38f
 
+                    for (step in 0..240) {
+                        val progress = step / 240f
+                        val angle = progress * 9f * Math.PI.toFloat()
+                        val radius = maxRadius * progress
+
+                        val x = cx + kotlin.math.cos(angle) * radius
+                        val y = cy + kotlin.math.sin(angle) * radius
+
+                        if (step == 0) {
+                            moveTo(x.toFloat(), y.toFloat())
+                        } else {
+                            lineTo(x.toFloat(), y.toFloat())
+                        }
+                    }
+                }
                 onDrawBehind {
                     drawRoundRect(
                         brush = baseBrush,
@@ -1820,7 +1839,17 @@ private fun GlassCard(
                     drawRoundRect(
                         brush = glossBrush,
                         cornerRadius = corner
-                    )
+                    )                    if (design.gradientType == "spiral") {
+                        drawPath(
+                            path = spiralPath,
+                            brush = Brush.sweepGradient(
+                                colors = glassColors
+                            ),
+                            style = androidx.compose.ui.graphics.drawscope.Stroke(
+                                width = 3.dp.toPx()
+                            )
+                        )
+                    }
                 }
             }
             .border(
