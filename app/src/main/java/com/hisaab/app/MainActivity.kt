@@ -969,7 +969,113 @@ private fun DesignStudio(
                 )
             }
         }
+       
+        Text(
+            "50 GRADIENT STYLES",
+            color = Color(0xFF8FEAFF),
+            fontWeight = FontWeight.Bold,
+            fontSize = 17.sp
+        )
 
+        Text(
+            "किसी भी बॉक्स को टच करके उसका Preview चुनें।",
+            color = Color.LightGray,
+            fontSize = 12.sp
+        )
+
+        gradientStyles.chunked(5).forEach { styleRow ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                styleRow.forEach { style ->
+                    val sampleBrush = when (style.effect) {
+                        "radial" -> Brush.radialGradient(
+                            style.colors.map { Color(it) }
+                        )
+                        "sweep" -> Brush.sweepGradient(
+                            style.colors.map { Color(it) }
+                        )
+                        else -> Brush.linearGradient(
+                            style.colors.map { Color(it) }
+                        )
+                    }
+
+                    Card(
+                        onClick = {
+                            selectedGradientStyle = style
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(sampleBrush),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                style.id.substringAfter("_"),
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 13.sp
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        selectedGradientStyle?.let { style ->
+            Text(
+                "PREVIEW: ${style.name}",
+                color = Color(0xFF8FEAFF),
+                fontWeight = FontWeight.Bold
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(115.dp)
+                    .background(
+                        Brush.linearGradient(
+                            style.colors.map { Color(it) }
+                        ),
+                        RoundedCornerShape(16.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    style.name,
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Button(
+                onClick = {
+                    onDesignChange(
+                        selectedScreen,
+                        design.copy(
+                            color1 = style.colors[0],
+                            color2 = style.colors[1],
+                            colors = style.colors,
+                            gradientType = style.effect,
+                            gradientAngle = style.angle,
+                            depth = style.depth,
+                            glow = style.glow
+                        )
+                    )
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("इस Gradient को APPLY करें")
+            }
+        }
+        
         Text(
             "चुनी हुई कैटेगरी: $selectedCategory",
             color = Color.White,
