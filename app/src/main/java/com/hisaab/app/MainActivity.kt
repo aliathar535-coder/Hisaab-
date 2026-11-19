@@ -1657,7 +1657,62 @@ Slider(
         )
     }
 }
+private fun makeGradientBrush(
+    type: String,
+    colors: List<Color>,
+    start: Offset,
+    end: Offset,
+    center: Offset,
+    width: Float,
+    height: Float
+): Brush {
+    val safeColors = colors.ifEmpty {
+        listOf(Color.Blue, Color.Cyan)
+    }
 
+    return when (type) {
+        "radial", "diamond" -> Brush.radialGradient(
+            colors = safeColors,
+            center = center,
+            radius = maxOf(width, height) / 1.5f
+        )
+
+        "sweep" -> Brush.sweepGradient(
+            colors = safeColors,
+            center = center
+        )
+
+        "horizontal" -> Brush.linearGradient(
+            colors = safeColors,
+            start = Offset(0f, height / 2f),
+            end = Offset(width, height / 2f)
+        )
+
+        "vertical" -> Brush.linearGradient(
+            colors = safeColors,
+            start = Offset(width / 2f, 0f),
+            end = Offset(width / 2f, height)
+        )
+
+        "mirror" -> Brush.linearGradient(
+            colors = safeColors + safeColors.reversed(),
+            start = start,
+            end = end
+        )
+
+        "reflected" -> Brush.linearGradient(
+            colors = safeColors.reversed(),
+            start = start,
+            end = end
+        )
+
+        else -> Brush.linearGradient(
+            colors = safeColors,
+            start = start,
+            end = end
+        )
+    }
+}
 @Composable
 private fun GlassCard(
     modifier: Modifier = Modifier,
