@@ -264,26 +264,7 @@ val updateScreenDesign: (String, ScreenDesign) -> Unit =
                 }
             }
 
-            TabRow(
-                selectedTabIndex = page,
-                containerColor = Color.Transparent,
-                contentColor = mint
-            ) {
-                listOf(
-                    "होम",
-                    "पीस",
-                    "हिस्ट्री",
-                    "सेटिंग"
-                ).forEachIndexed { i, name ->
-                    Tab(
-                        selected = page == i,
-                        onClick = { page = i },
-                        text = {
-                            Text(name, fontSize = 12.sp)
-                        }
-                    )
-                }
-            }
+            
 
             when (page) {
                 0 -> HomePage(
