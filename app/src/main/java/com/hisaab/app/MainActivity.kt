@@ -969,12 +969,12 @@ private fun DesignStudio(
         modifier = Modifier
             .fillMaxWidth()
             .background(
-                Color(0xFF172B43),
+                Color(0x26172B43),
                 RoundedCornerShape(22.dp)
             )
             .border(
                 1.dp,
-                Color(0xFF70DDF5),
+                Color(0x5570DDF5),
                 RoundedCornerShape(22.dp)
             )
             .padding(16.dp),
