@@ -412,7 +412,7 @@ Box(
         }
     }
 }    
-}
+
     @Composable
 private fun HomePage(
     design: ScreenDesign,
