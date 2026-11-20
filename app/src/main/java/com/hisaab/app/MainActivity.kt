@@ -280,7 +280,7 @@ Box(
                 },
                 onDragEnd = {
                     if (drag < -80f) {
-                        page = (page + 1).coerceAtMost(3)
+                        page = (page + 1).coerceAtMost(2)
                     } else if (drag > 80f) {
                         page = (page - 1).coerceAtLeast(0)
                     }
