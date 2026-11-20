@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -289,8 +291,11 @@ Box(
                 }
             )
         }
-) {
-}      
+   )
+          }            
+        
+        {           
+    
     when (page) {
                 0 -> HomePage(
     design = designs["home"] ?: ScreenDesign(),
