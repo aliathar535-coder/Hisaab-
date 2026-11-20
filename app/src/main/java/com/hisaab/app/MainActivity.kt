@@ -265,8 +265,33 @@ val updateScreenDesign: (String, ScreenDesign) -> Unit =
             }
 
             
+Box(
+    Modifier
+        .fillMaxSize()
+        .pointerInput(page) {
+            var drag = 0f
 
-            when (page) {
+            detectHorizontalDragGestures(
+                onHorizontalDrag = { change, amount ->
+                    drag += amount
+                    change.consume()
+                },
+                onDragEnd = {
+                    if (drag < -80f) {
+                        page = (page + 1).coerceAtMost(3)
+                    } else if (drag > 80f) {
+                        page = (page - 1).coerceAtLeast(0)
+                    }
+                    drag = 0f
+                },
+                onHorizontalDragCancel = {
+                    drag = 0f
+                }
+            )
+        }
+) {
+}      
+    when (page) {
                 0 -> HomePage(
     design = designs["home"] ?: ScreenDesign(),
     income = income,
