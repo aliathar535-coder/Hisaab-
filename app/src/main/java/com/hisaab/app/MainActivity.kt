@@ -1874,40 +1874,205 @@ private fun GlassCard(
                         cornerRadius = corner
                     )
 
-                                        drawRoundRect(
-                        brush = glossBrush,
+
+@Composable
+private fun GlassCard(
+    modifier: Modifier = Modifier,
+    design: ScreenDesign = ScreenDesign(),
+    content: @Composable ColumnScope.() -> Unit
+) {
+    val shape = RoundedCornerShape(25.dp)
+
+    val enabled = design.enabled
+    val glow = if (enabled) design.glow.coerceIn(0f, 1f) else 0.28f
+    val depth = if (enabled) design.depth.coerceIn(0f, 30f) else 8f
+    val transparency = if (enabled) {
+        design.transparency.coerceIn(0f, 1f)
+    } else {
+        0.42f
+    }
+    val shading = if (enabled) {
+        design.shading.coerceIn(0f, 1f)
+    } else {
+        0.32f
+    }
+
+    val colors = (if (enabled) design.colors else {
+        listOf(0xFF4D8CA6L, 0xFF334270L)
+    }).ifEmpty {
+        listOf(0xFF4D8CA6L, 0xFF334270L)
+    }.map {
+        Color(it).copy(
+            alpha = (transparency * 0.48f).coerceIn(0.12f, 0.58f)
+        )
+    }
+
+    Column(
+        modifier
+            .shadow(
+                elevation = depth.dp,
+                shape = shape,
+                ambientColor = Color(0xFF020817),
+                spotColor = Color(0xFF55DFFF).copy(
+                    alpha = 0.22f + glow * 0.30f
+                )
+            )
+            .drawWithCache {
+                val corner = CornerRadius(25.dp.toPx())
+                val center = Offset(
+                    size.width / 2f,
+                    size.height / 2f
+                )
+
+                val angle = Math.toRadians(
+                    design.gradientAngle.toDouble()
+                )
+
+                val dx = kotlin.math.cos(angle).toFloat() *
+                    size.width / 2f
+
+                val dy = kotlin.math.sin(angle).toFloat() *
+                    size.height / 2f
+
+                val baseBrush = makeGradientBrush(
+                    type = design.gradientType,
+                    colors = colors,
+                    start = Offset(center.x - dx, center.y - dy),
+                    end = Offset(center.x + dx, center.y + dy),
+                    center = center,
+                    width = size.width,
+                    height = size.height
+                )
+
+                val depthBrush = Brush.linearGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.24f * shading),
+                        Color.Transparent,
+                        Color.Black.copy(alpha = 0.48f * shading)
+                    ),
+                    start = Offset.Zero,
+                    end = Offset(size.width, size.height)
+                )
+
+                val topReflection = Brush.linearGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.62f * (0.35f + glow)),
+                        Color(0xFFB9F5FF).copy(alpha = 0.16f * glow),
+                        Color.Transparent
+                    ),
+                    start = Offset.Zero,
+                    end = Offset(
+                        size.width * 0.82f,
+                        size.height * 0.72f
+                    )
+                )
+
+                val bottomReflection = Brush.linearGradient(
+                    colors = listOf(
+                        Color.Transparent,
+                        Color(0xFF061426).copy(alpha = 0.42f),
+                        Color(0xFFB8F7FF).copy(alpha = 0.24f * glow)
+                    ),
+                    start = Offset(0f, size.height * 0.45f),
+                    end = Offset(size.width, size.height)
+                )
+
+                val edgeGlow = Brush.sweepGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.78f * glow),
+                        Color(0xFF5CEBFF).copy(alpha = 0.68f * glow),
+                        Color(0xFFB48CFF).copy(alpha = 0.55f * glow),
+                        Color.White.copy(alpha = 0.72f * glow)
+                    ),
+                    center = center
+                )
+
+                val innerRim = Brush.linearGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.70f * glow),
+                        Color.White.copy(alpha = 0.08f),
+                        Color(0xFF071629).copy(alpha = 0.66f)
+                    ),
+                    start = Offset.Zero,
+                    end = Offset(size.width, size.height)
+                )
+
+                val highlight = Brush.linearGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.72f * glow),
+                        Color.White.copy(alpha = 0.10f),
+                        Color.Transparent
+                    ),
+                    start = Offset(10.dp.toPx(), 2.dp.toPx()),
+                    end = Offset(
+                        size.width * 0.72f,
+                        size.height * 0.38f
+                    )
+                )
+
+                onDrawBehind {
+                    drawRoundRect(
+                        brush = baseBrush,
                         cornerRadius = corner
                     )
 
-                    if (design.gradientType == "spiral") {
-                      
-                        drawPath(
-                            path = spiralPath,
-                            brush = Brush.sweepGradient(
-                                colors = glassColors
-                            ),
-                            style = androidx.compose.ui.graphics.drawscope.Stroke(
-                                width = 3.dp.toPx()
-                            )
+                    drawRoundRect(
+                        brush = depthBrush,
+                        cornerRadius = corner
+                    )
+
+                    drawRoundRect(
+                        brush = topReflection,
+                        cornerRadius = corner
+                    )
+
+                    drawRoundRect(
+                        brush = bottomReflection,
+                        cornerRadius = corner
+                    )
+
+                    drawRoundRect(
+                        brush = edgeGlow,
+                        cornerRadius = corner,
+                        style = androidx.compose.ui.graphics.drawscope.Stroke(
+                            width = 2.6.dp.toPx()
                         )
-                    }
+                    )
+
+                    drawRoundRect(
+                        brush = innerRim,
+                        topLeft = Offset(2.dp.toPx(), 2.dp.toPx()),
+                        size = androidx.compose.ui.geometry.Size(
+                            size.width - 4.dp.toPx(),
+                            size.height - 4.dp.toPx()
+                        ),
+                        cornerRadius = CornerRadius(23.dp.toPx()),
+                        style = androidx.compose.ui.graphics.drawscope.Stroke(
+                            width = 1.1.dp.toPx()
+                        )
+                    )
+
+                    drawRoundRect(
+                        brush = highlight,
+                        topLeft = Offset(4.dp.toPx(), 3.dp.toPx()),
+                        size = androidx.compose.ui.geometry.Size(
+                            size.width - 8.dp.toPx(),
+                            size.height * 0.42f
+                        ),
+                        cornerRadius = CornerRadius(22.dp.toPx())
+                    )
                 }
             }
             .border(
-                1.5.dp,
-                Color(0xFFB9F3FF).copy(
-                    alpha = if (design.enabled) {
-                        0.25f + (glowAmount * 0.65f)
-                    } else {
-                        0.35f
-                    }
-                ),
-                shape
+                width = 1.dp,
+                color = Color.White.copy(alpha = 0.30f + glow * 0.42f),
+                shape = shape
             )
             .padding(16.dp),
         content = content
     )
 }
+
 private fun now(): String {
     return SimpleDateFormat(
         "dd MMM yyyy, hh:mm a",
