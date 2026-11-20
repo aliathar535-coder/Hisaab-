@@ -286,7 +286,7 @@ Box(
                     }
                     drag = 0f
                 },
-                onHorizontalDragCancel = {
+                onDragCancel = {
                     drag = 0f
                 }
             )
