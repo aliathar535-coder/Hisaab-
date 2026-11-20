@@ -11,6 +11,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -353,32 +354,26 @@ Box(
                     }
                 )
 
-                2 -> HistoryPage(
-                    records = records,
-                    entries = entries
-                )
 
-                3 -> Box(Modifier.fillMaxSize()) {
+2 -> HistoryPage(
+    records = records,
+    entries = entries,
+    onDeleteRecord = { index ->
+        records = records.filterIndexed { i, _ -> i != index }
+        savePieces(prefs, records)
+    },
+    onDeleteEntry = { index ->
+        entries = entries.filterIndexed { i, _ -> i != index }
+        saveEntries(prefs, entries)
+    },
+    onClearAll = {
+        records = emptyList()
+        entries = emptyList()
+        savePieces(prefs, records)
+        saveEntries(prefs, entries)
+    }
+)
 
-    HomePage(
-        design = designs["home"] ?: ScreenDesign(),
-        income = income,
-        expense = expense,
-        balance = balance,
-        records = records,
-        onIncome = {
-            isIncome = true
-            title = ""
-            amount = ""
-            dialog = "entry"
-        },
-        onExpense = {
-            isIncome = false
-            title = ""
-            amount = ""
-            dialog = "entry"
-        }
-    )
 
     Box(
         Modifier
@@ -675,11 +670,19 @@ private fun PiecePage(
     }
 }
 
+
 @Composable
 private fun HistoryPage(
     records: List<PieceRecord>,
-    entries: List<Entry>
+    entries: List<Entry>,
+    onDeleteRecord: (Int) -> Unit,
+    onDeleteEntry: (Int) -> Unit,
+    onClearAll: () -> Unit
 ) {
+    var deleteRecordIndex by remember { mutableStateOf<Int?>(null) }
+    var deleteEntryIndex by remember { mutableStateOf<Int?>(null) }
+    var showClearConfirm by remember { mutableStateOf(false) }
+
     LazyColumn(
         Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
@@ -692,54 +695,140 @@ private fun HistoryPage(
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold
             )
-        }
-
-        items(records.reversed()) { record ->
-            GlassCard {
-                Text(
-                    record.name,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Text(
-                    "${record.quantity} पीस × ₹${money(record.rate)}",
-                    color = Color.LightGray
-                )
-
-                Text(
-                    "कुल ₹${money(record.total)}",
-                    color = mint,
-                    fontSize = 19.sp
-                )
-
-                Text(
-                    record.time,
-                    color = Color.Gray,
-                    fontSize = 11.sp
-                )
+            Spacer(Modifier.height(8.dp))
+            Button(
+                onClick = { showClearConfirm = true },
+                enabled = records.isNotEmpty() || entries.isNotEmpty(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF9A4355)
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("पूरी हिस्ट्री साफ करें")
             }
         }
 
-        items(entries.reversed()) { entry ->
+        itemsIndexed(records.indices.reversed().toList()) { _, index ->
+            val record = records[index]
             GlassCard {
-                Text(entry.title, color = Color.White)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Text(
+                            record.name,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            "${record.quantity} पीस × ₹${money(record.rate)}",
+                            color = Color.LightGray
+                        )
+                        Text(
+                            "कुल ₹${money(record.total)}",
+                            color = mint,
+                            fontSize = 19.sp
+                        )
+                        Text(
+                            record.time,
+                            color = Color.Gray,
+                            fontSize = 11.sp
+                        )
+                    }
+                    TextButton(
+                        onClick = { deleteRecordIndex = index }
+                    ) {
+                        Text("🗑 हटाएँ", color = red)
+                    }
+                }
+            }
+        }
 
-                Text(
-                    (if (entry.income) "+ " else "- ") +
-                        "₹${money(entry.amount)}",
-                    color = if (entry.income) mint else red
-                )
-                
-                Text(
-                    entry.time,
-                    color = Color.Gray,
-                    fontSize = 11.sp
-                )
+        itemsIndexed(entries.indices.reversed().toList()) { _, index ->
+            val entry = entries[index]
+            GlassCard {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Text(entry.title, color = Color.White)
+                        Text(
+                            (if (entry.income) "+ " else "- ") +
+                                "₹${money(entry.amount)}",
+                            color = if (entry.income) mint else red
+                        )
+                        Text(
+                            entry.time,
+                            color = Color.Gray,
+                            fontSize = 11.sp
+                        )
+                    }
+                    TextButton(
+                        onClick = { deleteEntryIndex = index }
+                    ) {
+                        Text("🗑 हटाएँ", color = red)
+                    }
+                }
             }
         }
     }
+
+    if (deleteRecordIndex != null) {
+        AlertDialog(
+            onDismissRequest = { deleteRecordIndex = null },
+            title = { Text("पीस हिस्ट्री हटाएँ?") },
+            text = { Text("क्या आप यह पीस एंट्री डिलीट करना चाहते हैं?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    deleteRecordIndex?.let(onDeleteRecord)
+                    deleteRecordIndex = null
+                }) { Text("हाँ, हटाएँ") }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    deleteRecordIndex = null
+                }) { Text("नहीं") }
+            }
+        )
+    }
+
+    if (deleteEntryIndex != null) {
+        AlertDialog(
+            onDismissRequest = { deleteEntryIndex = null },
+            title = { Text("हिस्ट्री हटाएँ?") },
+            text = { Text("क्या आप यह कमाई/खर्च की एंट्री डिलीट करना चाहते हैं?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    deleteEntryIndex?.let(onDeleteEntry)
+                    deleteEntryIndex = null
+                }) { Text("हाँ, हटाएँ") }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    deleteEntryIndex = null
+                }) { Text("नहीं") }
+            }
+        )
+    }
+
+    if (showClearConfirm) {
+        AlertDialog(
+            onDismissRequest = { showClearConfirm = false },
+            title = { Text("पूरी हिस्ट्री साफ करें?") },
+            text = {
+                Text("सभी पीस एंट्री, कमाई और खर्च की हिस्ट्री डिलीट हो जाएगी। क्या आप पक्का चाहते हैं?")
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    onClearAll()
+                    showClearConfirm = false
+                }) { Text("हाँ, सब साफ करें") }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showClearConfirm = false
+                }) { Text("रद्द करें") }
+            }
+        )
+    }
 }
+
 
 @Composable
 private fun SettingsPage(
