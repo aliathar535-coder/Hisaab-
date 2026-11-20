@@ -375,42 +375,38 @@ Box(
 )
 
 
-    Box(
-        Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.22f))
-    )
 
-    SettingsPage(
-        designs = designs,
-        onDesignChange = updateScreenDesign,
-        pieceName = pieceName,
-        onPieceName = { pieceName = it },
-        pieceRate = pieceRate,
-        onPieceRate = { pieceRate = it },
-        onSaveRate = {
-            val r = pieceRate.toDoubleOrNull()
+3 -> SettingsPage(
+    designs = designs,
+    onDesignChange = updateScreenDesign,
+    pieceName = pieceName,
+    onPieceName = { pieceName = it },
+    pieceRate = pieceRate,
+    onPieceRate = { pieceRate = it },
+    onSaveRate = {
+        val r = pieceRate.toDoubleOrNull()
 
-            if (
-                pieceName.isNotBlank() &&
-                r != null &&
-                r > 0
-            ) {
-                val updated = rates.filterNot {
-                    it.name.equals(pieceName.trim(), true)
-                }
-
-                rates = updated + PieceRate(
-                    pieceName.trim(),
-                    r
-                )
-
-                saveRates(prefs, rates)
-                pieceName = ""
-                pieceRate = ""
+        if (
+            pieceName.isNotBlank() &&
+            r != null &&
+            r > 0
+        ) {
+            val updated = rates.filterNot {
+                it.name.equals(pieceName.trim(), true)
             }
+
+            rates = updated + PieceRate(
+                pieceName.trim(),
+                r
+            )
+
+            saveRates(prefs, rates)
+            pieceName = ""
+            pieceRate = ""
         }
-    )
+    }
+)
+
 }
             }
         }
