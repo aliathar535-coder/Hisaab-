@@ -393,7 +393,8 @@ Box(
         }
     }
 }    
-@Composable
+}
+    @Composable
 private fun HomePage(
     design: ScreenDesign,
     income: Double,
