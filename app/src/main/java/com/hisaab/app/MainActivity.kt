@@ -407,6 +407,7 @@ Box(
     }
 )
 
+
 if (dialog == "entry") {
     AlertDialog(
         onDismissRequest = {
@@ -482,6 +483,7 @@ if (dialog == "entry") {
         textContentColor = Color.White
     )
 }
+
 
 }
             }
