@@ -291,11 +291,7 @@ Box(
                 }
             )
         }
-   )
-          }            
-        
-        {           
-    
+) {
     when (page) {
                 0 -> HomePage(
     design = designs["home"] ?: ScreenDesign(),
