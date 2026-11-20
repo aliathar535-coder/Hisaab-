@@ -1874,81 +1874,215 @@ private fun GlassCard(
                     end = Offset(size.width, size.height)
                 )
 
-                val highlight = Brush.linearGradient(
+@Composable
+private fun GlassCard(
+    modifier: Modifier = Modifier,
+    design: ScreenDesign = ScreenDesign(),
+    content: @Composable ColumnScope.() -> Unit
+) {
+    val shape = RoundedCornerShape(25.dp)
+    val enabled = design.enabled
+
+    val glow = design.glow.coerceIn(0f, 1f)
+    val depth = if (enabled) {
+        design.depth.coerceIn(12f, 30f)
+    } else {
+        5f
+    }
+
+    // OFF: keep user's selected colors solid.
+    // ON: translucent glass color.
+    val cardColors = design.colors.ifEmpty {
+        listOf(0xFF263B59L, 0xFF17243D)
+    }.map { value ->
+        val original = Color(value)
+        original.copy(
+            alpha = if (enabled) {
+                (1f - design.transparency.coerceIn(0f, 1f) * 0.72f)
+                    .coerceIn(0.22f, 0.82f)
+            } else {
+                1f
+            }
+        )
+    }
+
+    val safeColors = if (cardColors.size == 1) {
+        listOf(cardColors.first(), cardColors.first())
+    } else {
+        cardColors
+    }
+
+    Column(
+        modifier
+            .shadow(
+                elevation = depth.dp,
+                shape = shape,
+                ambientColor = Color.Black.copy(alpha = 0.65f),
+                spotColor = if (enabled) {
+                    Color(0xFF65E8FF).copy(alpha = 0.35f + glow * 0.4f)
+                } else {
+                    Color.Black.copy(alpha = 0.35f)
+                }
+            )
+            .drawWithCache {
+                val corner = CornerRadius(25.dp.toPx())
+                val center = Offset(size.width / 2f, size.height / 2f)
+
+                val angle = Math.toRadians(
+                    design.gradientAngle.toDouble()
+                )
+
+                val dx = kotlin.math.cos(angle).toFloat() * size.width / 2f
+                val dy = kotlin.math.sin(angle).toFloat() * size.height / 2f
+
+                val baseBrush = makeGradientBrush(
+                    type = design.gradientType,
+                    colors = safeColors,
+                    start = Offset(center.x - dx, center.y - dy),
+                    end = Offset(center.x + dx, center.y + dy),
+                    center = center,
+                    width = size.width,
+                    height = size.height
+                )
+
+                val darkSide = Brush.linearGradient(
                     colors = listOf(
-                        Color.White.copy(alpha = 0.72f * glow),
-                        Color.White.copy(alpha = 0.10f),
+                        Color(0xFF020817).copy(alpha = 0.85f),
+                        Color(0xFF101C35).copy(alpha = 0.95f),
+                        Color(0xFF020817).copy(alpha = 0.9f)
+                    ),
+                    start = Offset(0f, 0f),
+                    end = Offset(size.width, size.height)
+                )
+
+                val topLight = Brush.linearGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = if (enabled) 0.82f else 0.16f),
+                        Color.White.copy(alpha = if (enabled) 0.28f else 0.04f),
                         Color.Transparent
                     ),
-                    start = Offset(10.dp.toPx(), 2.dp.toPx()),
-                    end = Offset(
-                        size.width * 0.72f,
-                        size.height * 0.38f
-                    )
+                    start = Offset(0f, 0f),
+                    end = Offset(size.width * 0.9f, size.height * 0.65f)
+                )
+
+                val bottomShade = Brush.linearGradient(
+                    colors = listOf(
+                        Color.Transparent,
+                        Color.Black.copy(alpha = if (enabled) 0.48f else 0.12f)
+                    ),
+                    start = Offset(0f, size.height * 0.45f),
+                    end = Offset(size.width, size.height)
+                )
+
+                val glassEdge = Brush.sweepGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.95f),
+                        Color(0xFF55E9FF).copy(alpha = 0.9f),
+                        Color(0xFF9A7CFF).copy(alpha = 0.85f),
+                        Color.White.copy(alpha = 0.95f)
+                    ),
+                    center = center
+                )
+
+                val innerEdge = Brush.linearGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.85f),
+                        Color.White.copy(alpha = 0.08f),
+                        Color.Black.copy(alpha = 0.55f)
+                    ),
+                    start = Offset.Zero,
+                    end = Offset(size.width, size.height)
+                )
+
+                val reflection = Brush.linearGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.62f),
+                        Color.White.copy(alpha = 0.20f),
+                        Color.Transparent
+                    ),
+                    start = Offset(8.dp.toPx(), 2.dp.toPx()),
+                    end = Offset(size.width * 0.75f, size.height * 0.35f)
                 )
 
                 onDrawBehind {
+                    if (enabled) {
+                        // Deep 3D body underneath the glass face.
+                        drawRoundRect(
+                            brush = darkSide,
+                            topLeft = Offset(0f, 7.dp.toPx()),
+                            size = size,
+                            cornerRadius = corner
+                        )
+                    }
+
+                    // Main face.
                     drawRoundRect(
                         brush = baseBrush,
                         cornerRadius = corner
                     )
 
-                    drawRoundRect(
-                        brush = depthBrush,
-                        cornerRadius = corner
-                    )
-
-                    drawRoundRect(
-                        brush = topReflection,
-                        cornerRadius = corner
-                    )
-
-                    drawRoundRect(
-                        brush = bottomReflection,
-                        cornerRadius = corner
-                    )
-
-                    drawRoundRect(
-                        brush = edgeGlow,
-                        cornerRadius = corner,
-                        style = androidx.compose.ui.graphics.drawscope.Stroke(
-                            width = 2.6.dp.toPx()
+                    if (enabled) {
+                        // Light and dark depth.
+                        drawRoundRect(
+                            brush = topLight,
+                            cornerRadius = corner
                         )
-                    )
 
-                    drawRoundRect(
-                        brush = innerRim,
-                        topLeft = Offset(2.dp.toPx(), 2.dp.toPx()),
-                        size = androidx.compose.ui.geometry.Size(
-                            size.width - 4.dp.toPx(),
-                            size.height - 4.dp.toPx()
-                        ),
-                        cornerRadius = CornerRadius(23.dp.toPx()),
-                        style = androidx.compose.ui.graphics.drawscope.Stroke(
-                            width = 1.1.dp.toPx()
+                        drawRoundRect(
+                            brush = bottomShade,
+                            cornerRadius = corner
                         )
-                    )
 
-                    drawRoundRect(
-                        brush = highlight,
-                        topLeft = Offset(4.dp.toPx(), 3.dp.toPx()),
-                        size = androidx.compose.ui.geometry.Size(
-                            size.width - 8.dp.toPx(),
-                            size.height * 0.42f
-                        ),
-                        cornerRadius = CornerRadius(22.dp.toPx())
-                    )
+                        // Bright outer glass rim.
+                        drawRoundRect(
+                            brush = glassEdge,
+                            cornerRadius = corner,
+                            style = androidx.compose.ui.graphics.drawscope.Stroke(
+                                width = 3.dp.toPx()
+                            )
+                        )
+
+                        // Inner bevel.
+                        drawRoundRect(
+                            brush = innerEdge,
+                            topLeft = Offset(2.dp.toPx(), 2.dp.toPx()),
+                            size = androidx.compose.ui.geometry.Size(
+                                size.width - 4.dp.toPx(),
+                                size.height - 4.dp.toPx()
+                            ),
+                            cornerRadius = CornerRadius(23.dp.toPx()),
+                            style = androidx.compose.ui.graphics.drawscope.Stroke(
+                                width = 1.5.dp.toPx()
+                            )
+                        )
+
+                        // Glossy reflection.
+                        drawRoundRect(
+                            brush = reflection,
+                            topLeft = Offset(5.dp.toPx(), 4.dp.toPx()),
+                            size = androidx.compose.ui.geometry.Size(
+                                size.width - 10.dp.toPx(),
+                                size.height * 0.38f
+                            ),
+                            cornerRadius = CornerRadius(21.dp.toPx())
+                        )
+                    }
                 }
             }
             .border(
-                width = 1.dp,
-                color = Color.White.copy(alpha = 0.30f + glow * 0.42f),
+                width = if (enabled) 1.8.dp else 1.dp,
+                color = if (enabled) {
+                    Color.White.copy(alpha = 0.75f)
+                } else {
+                    Color.White.copy(alpha = 0.22f)
+                },
                 shape = shape
             )
             .padding(16.dp),
         content = content
     )
 }
+
 
 private fun now(): String {
     return SimpleDateFormat(
