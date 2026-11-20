@@ -257,7 +257,9 @@ val updateScreenDesign: (String, ScreenDesign) -> Unit =
 
                 Spacer(Modifier.width(12.dp))
 
-                IconButton(onClick = { page = 3 }) {
+                IconButton(onClick = {
+    page = if (page == 3) 0 else 3
+}) {
                     Icon(
                         Icons.Default.Settings,
                         "Settings",
@@ -356,39 +358,65 @@ Box(
                     entries = entries
                 )
 
-                3 -> SettingsPage(
-    designs = designs,
-    onDesignChange = updateScreenDesign,
-    pieceName = pieceName,
-                    onPieceName = { pieceName = it },
-                    pieceRate = pieceRate,
-                    onPieceRate = { pieceRate = it },
-                    onSaveRate = {
-                        val r = pieceRate.toDoubleOrNull()
+                3 -> Box(Modifier.fillMaxSize()) {
 
-                        if (
-                            pieceName.isNotBlank() &&
-                            r != null &&
-                            r > 0
-                        ) {
-                            val updated = rates.filterNot {
-                                it.name.equals(
-                                    pieceName.trim(),
-                                    true
-                                )
-                            }
+    HomePage(
+        design = designs["home"] ?: ScreenDesign(),
+        income = income,
+        expense = expense,
+        balance = balance,
+        records = records,
+        onIncome = {
+            isIncome = true
+            title = ""
+            amount = ""
+            dialog = "entry"
+        },
+        onExpense = {
+            isIncome = false
+            title = ""
+            amount = ""
+            dialog = "entry"
+        }
+    )
 
-                            rates = updated + PieceRate(
-                                pieceName.trim(),
-                                r
-                            )
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.22f))
+    )
 
-                            saveRates(prefs, rates)
-                            pieceName = ""
-                            pieceRate = ""
-                        }
-                    }
+    SettingsPage(
+        designs = designs,
+        onDesignChange = updateScreenDesign,
+        pieceName = pieceName,
+        onPieceName = { pieceName = it },
+        pieceRate = pieceRate,
+        onPieceRate = { pieceRate = it },
+        onSaveRate = {
+            val r = pieceRate.toDoubleOrNull()
+
+            if (
+                pieceName.isNotBlank() &&
+                r != null &&
+                r > 0
+            ) {
+                val updated = rates.filterNot {
+                    it.name.equals(pieceName.trim(), true)
+                }
+
+                rates = updated + PieceRate(
+                    pieceName.trim(),
+                    r
                 )
+
+                saveRates(prefs, rates)
+                pieceName = ""
+                pieceRate = ""
+            }
+        }
+    )
+}
             }
         }
     }
