@@ -1,5 +1,6 @@
 
 package com.hisaab.app
+import android.graphics.BitmapFactory
 import android.graphics.Bitmap
 import android.net.Uri
 import java.io.File
