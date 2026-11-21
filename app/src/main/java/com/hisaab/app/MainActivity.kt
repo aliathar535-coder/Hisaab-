@@ -2169,6 +2169,44 @@ private fun money(value: Double): String {
     return String.format(Locale.US, "%,.2f", value)
 }
 
+private fun savePiecePhoto(
+    context: android.content.Context,
+    bitmap: Bitmap?,
+    uri: Uri?
+): String {
+    return try {
+        val file = File(
+            context.filesDir,
+            "piece_${System.currentTimeMillis()}.jpg"
+        )
+
+        if (bitmap != null) {
+            FileOutputStream(file).use { output ->
+                bitmap.compress(
+                    Bitmap.CompressFormat.JPEG,
+                    92,
+                    output
+                )
+            }
+        } else if (uri != null) {
+            val input = context.contentResolver.openInputStream(uri)
+                ?: return ""
+
+            input.use { source ->
+                FileOutputStream(file).use { output ->
+                    source.copyTo(output)
+                }
+            }
+        } else {
+            return ""
+        }
+
+        file.absolutePath
+    } catch (_: Exception) {
+        ""
+    }
+}
+
 private fun loadEntries(
     p: android.content.SharedPreferences
 ): List<Entry> {
