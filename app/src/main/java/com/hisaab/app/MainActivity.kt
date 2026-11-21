@@ -467,55 +467,186 @@ if (dialog == "entry") {
                 color = Color.White
             )
         },
+        
         text = {
             Column {
-                OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    label = { Text("किस चीज का हिसाब है?") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
+                if (isIncome) {
+                    Box {
+                        OutlinedButton(
+                            onClick = {
+                                entryRateMenuExpanded = true
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                if (entryPieceName.isBlank())
+                                    "पीस का नाम चुनें"
+                                else entryPieceName
+                            )
+                        }
 
-                Spacer(Modifier.height(12.dp))
+                        DropdownMenu(
+                            expanded = entryRateMenuExpanded,
+                            onDismissRequest = {
+                                entryRateMenuExpanded = false
+                            }
+                        ) {
+                            rates.forEach { rate ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text("${rate.name} — ₹${money(rate.rate)}")
+                                    },
+                                    onClick = {
+                                        entryPieceName = rate.name
+                                        entryRateMenuExpanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
 
-                OutlinedTextField(
-                    value = amount,
-                    onValueChange = { amount = it },
-                    label = { Text("रकम दर्ज करें (₹)") },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal
-                    ),
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
+                    Spacer(Modifier.height(10.dp))
+
+                    OutlinedTextField(
+                        value = entryQuantity,
+                        onValueChange = {
+                            entryQuantity = it.filter { c -> c.isDigit() }
+                        },
+                        label = { Text("पीस की संख्या") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Text(
+                        "रेट: ₹${money(entrySelectedRate)}",
+                        color = Color.White
+                    )
+
+                    Text(
+                        "कुल कमाई: ₹${money(entryTotal)}",
+                        color = mint,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(Modifier.height(10.dp))
+
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Button(
+                            onClick = {
+                                galleryLauncher.launch("image/*")
+                            }
+                        ) {
+                            Text("गैलरी")
+                        }
+
+                        Button(
+                            onClick = {
+                                cameraLauncher.launch()
+                            }
+                        ) {
+                            Text("कैमरा")
+                        }
+                    }
+
+                    piecePhoto?.let { bitmap ->
+                        Image(
+                            bitmap = bitmap.asImageBitmap(),
+                            contentDescription = "पीस फोटो",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(130.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+
+                    if (piecePhotoUri != null) {
+                        Text("गैलरी की फोटो चुनी गई है", color = mint)
+                    }
+
+                } else {
+                    OutlinedTextField(
+                        value = title,
+                        onValueChange = { title = it },
+                        label = { Text("किस चीज का खर्च है?") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(Modifier.height(12.dp))
+
+                    OutlinedTextField(
+                        value = amount,
+                        onValueChange = { amount = it },
+                        label = { Text("रकम दर्ज करें (₹)") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         },
         confirmButton = {
             Button(
-                enabled = title.isNotBlank() &&
-                    (amount.toDoubleOrNull() ?: 0.0) > 0,
+                enabled = if (isIncome) {
+                    entryPieceName.isNotBlank() &&
+                    entryQty > 0 &&
+                    entrySelectedRate > 0
+                } else {
+                    title.isNotBlank() &&
+                    (amount.toDoubleOrNull() ?: 0.0) > 0
+                },
                 onClick = {
-                    val value = amount.toDoubleOrNull()
-
-                    if (value != null && value > 0) {
-                        entries = entries + Entry(
-                            title = title.trim(),
-                            amount = value,
-                            income = isIncome,
-                            time = now()
+                    if (isIncome) {
+                        val savedPhoto = savePiecePhoto(
+                            context,
+                            piecePhoto,
+                            piecePhotoUri
                         )
 
-                        saveEntries(prefs, entries)
-                        title = ""
-                        amount = ""
-                        dialog = ""
+                        val newRecord = PieceRecord(
+                            name = entryPieceName,
+                            rate = entrySelectedRate,
+                            quantity = entryQty,
+                            total = entryTotal,
+                            time = now(),
+                            photoPath = savedPhoto
+                        )
+
+                        records = records + newRecord
+                        savePieces(prefs, records)
+
+                        entryPieceName = ""
+                        entryQuantity = ""
+                        piecePhoto = null
+                        piecePhotoUri = null
+
+                    } else {
+                        val value = amount.toDoubleOrNull()
+
+                        if (value != null && value > 0) {
+                            entries = entries + Entry(
+                                title = title.trim(),
+                                amount = value,
+                                income = false,
+                                time = now()
+                            )
+
+                            saveEntries(prefs, entries)
+                            title = ""
+                            amount = ""
+                        }
                     }
+
+                    dialog = ""
                 }
             ) {
                 Text("सेव करें")
             }
         },
+        
         dismissButton = {
             TextButton(
                 onClick = {
