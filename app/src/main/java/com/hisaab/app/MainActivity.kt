@@ -233,7 +233,13 @@ val cameraLauncher =
 
     val selectedRate =
         rates.find { it.name == selectedPiece }?.rate ?: 0.0
+    
+val entrySelectedRate =
+    rates.find { it.name == entryPieceName }?.rate ?: 0.0
 
+val entryQty = entryQuantity.toIntOrNull() ?: 0
+val entryTotal = entrySelectedRate * entryQty
+    
     val qty = quantity.toIntOrNull() ?: 0
     val pieceTotal = selectedRate * qty
 
@@ -337,6 +343,10 @@ Box(
                         isIncome = true
                         title = ""
                         amount = ""
+                       entryPieceName = ""
+entryQuantity = ""
+piecePhoto = null
+piecePhotoUri = null
                         dialog = "entry"
                     },
                     onExpense = {
