@@ -958,38 +958,37 @@ private fun HistoryPage(
         }
 
         itemsIndexed(records.indices.reversed().toList()) { _, index ->
-            val record = records[index]
-            GlassCard {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Column(Modifier.weight(1f)) {
-                        Text(
-                            record.name,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            "${record.quantity} पीस × ₹${money(record.rate)}",
-                            color = Color.LightGray
-                        )
-                        Text(
-                            "कुल ₹${money(record.total)}",
-                            color = mint,
-                            fontSize = 19.sp
-                        )
-                        Text(
-                            record.time,
-                            color = Color.Gray,
-                            fontSize = 11.sp
-                        )
-                    }
-                    TextButton(
-                        onClick = { deleteRecordIndex = index }
-                    ) {
-                        Text("🗑 हटाएँ", color = red)
-                    }
-                }
-            }
+            val historyPhoto = remember(record.photoPath) {
+    if (record.photoPath.isNotBlank()) {
+        BitmapFactory.decodeFile(record.photoPath)?.asImageBitmap()
+    } else null
+}
+
+Column {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.weight(1f)) {
+            Text(record.name, color = Color.White,
+                fontWeight = FontWeight.Bold)
+            Text("${record.quantity} पीस × ₹${money(record.rate)}",
+                color = Color.LightGray)
+            Text("कुल ₹${money(record.total)}",
+                color = mint, fontSize = 19.sp)
+            Text(record.time, color = Color.Gray, fontSize = 11.sp)
         }
+        TextButton(onClick = { deleteRecordIndex = index }) {
+            Text("🗑 हटाएँ", color = red)
+        }
+    }
+
+    historyPhoto?.let { photo ->
+        Image(
+            bitmap = photo,
+            contentDescription = "पीस की फोटो",
+            modifier = Modifier.fillMaxWidth().height(180.dp),
+            contentScale = ContentScale.Crop
+        )
+    }
+}
 
         itemsIndexed(entries.indices.reversed().toList()) { _, index ->
             val entry = entries[index]
