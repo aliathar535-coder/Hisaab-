@@ -2448,7 +2448,8 @@ private fun loadPieces(
                 o.getDouble("rate"),
                 o.getInt("quantity"),
                 o.getDouble("total"),
-                o.getString("time")
+                o.getString("time"),
+                o.optString("photoPath", "")
             )
         }
     } catch (_: Exception) {
@@ -2470,6 +2471,7 @@ private fun savePieces(
                 .put("quantity", it.quantity)
                 .put("total", it.total)
                 .put("time", it.time)
+                .put("photoPath", it.photoPath)
         )
     }
 
