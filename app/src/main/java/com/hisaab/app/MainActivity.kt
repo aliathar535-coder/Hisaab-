@@ -198,7 +198,30 @@ val updateScreenDesign: (String, ScreenDesign) -> Unit =
     var pieceRate by remember { mutableStateOf("") }
     var selectedPiece by remember { mutableStateOf("") }
     var quantity by remember { mutableStateOf("") }
+    
+var entryPieceName by remember { mutableStateOf("") }
+var entryQuantity by remember { mutableStateOf("") }
+var entryRateMenuExpanded by remember { mutableStateOf(false) }
 
+var piecePhoto by remember { mutableStateOf<Bitmap?>(null) }
+var piecePhotoUri by remember { mutableStateOf<Uri?>(null) }
+
+val galleryLauncher =
+    rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri ->
+        piecePhotoUri = uri
+        piecePhoto = null
+    }
+
+val cameraLauncher =
+    rememberLauncherForActivityResult(
+        ActivityResultContracts.TakePicturePreview()
+    ) { bitmap ->
+        piecePhoto = bitmap
+        piecePhotoUri = null
+    }
+    
     val income =
         entries.filter { it.income }.sumOf { it.amount } +
         records.sumOf { it.total }
