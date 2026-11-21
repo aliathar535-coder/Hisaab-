@@ -545,7 +545,9 @@ if (dialog == "entry") {
 
                         Button(
                             onClick = {
-                                cameraLauncher.launch()
+                                
+                         cameraLauncher.launch(null)
+
                             }
                         ) {
                             Text("कैमरा")
