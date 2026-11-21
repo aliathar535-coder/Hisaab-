@@ -134,14 +134,14 @@ private val designScreens = listOf(
     "settings_menu"
 )
 
- private data class PieceRecord( 
+private data class PieceRecord(
     val name: String,
     val rate: Double,
     val quantity: Int,
     val total: Double,
-    val time: String
+    val time: String,
+    val photoPath: String = ""
 )
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
