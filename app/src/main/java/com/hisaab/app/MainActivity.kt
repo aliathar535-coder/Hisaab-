@@ -3098,7 +3098,13 @@ private fun saveHistoryCardStyle(
     item.put("verticalPadding", style.verticalPadding)
     item.put("borderColor", style.borderColor)
     item.put("borderWidth", style.borderWidth)
+    val gradientArray = JSONArray()
+style.gradientColors.take(5).forEach { color ->
+    gradientArray.put(color)
+}
 
+item.put("gradientColors", gradientArray)
+item.put("gradientAngle", style.gradientAngle)
     prefs.edit().putString(key, item.toString()).apply()
 }
 
