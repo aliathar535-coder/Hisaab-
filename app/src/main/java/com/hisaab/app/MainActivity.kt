@@ -1302,12 +1302,7 @@ private fun SettingsPage(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-               item {
-            DesignStudio(
-                designs = designs,
-                onDesignChange = onDesignChange
-            )       
-               }
+               
 
         item {
             GlassCard {
