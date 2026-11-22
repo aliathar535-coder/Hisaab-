@@ -1092,8 +1092,8 @@ val historyPhoto by produceState<androidx.compose.ui.graphics.ImageBitmap?>(
 
                             Text(
                                 "कुल ₹${money(record.total)}",
-                                color = mint,
-                                fontSize = 19.sp
+                            color = Color(pieceCardStyle.accentColor),
+                            fontSize = 19.sp
                             )
 
                             Text(
