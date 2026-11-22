@@ -1361,6 +1361,42 @@ var colorError by remember(editingHistoryStyle) {
                         singleLine = true
                     )
                     Text("छोटे टेक्स्ट का रंग")
+                    Row(
+    modifier = Modifier.fillMaxWidth(),
+    horizontalArrangement = Arrangement.spacedBy(6.dp)
+) {
+    val previewColors = currentStyle.gradientColors.take(5)
+
+    repeat(5) { index ->
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .height(48.dp)
+                .background(
+                    Color(previewColors.getOrElse(index) {
+                        0xFF263B59L
+                    }),
+                    RoundedCornerShape(10.dp)
+                )
+                .border(
+                    2.dp,
+                    if (activeGradientPicker == index)
+                        Color.White else Color.Gray,
+                    RoundedCornerShape(10.dp)
+                )
+                .clickable {
+                    activeGradientPicker = index
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "${index + 1}",
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+                    }
 OutlinedTextField(
     value = secondaryHex,
     onValueChange = { secondaryHex = it },
