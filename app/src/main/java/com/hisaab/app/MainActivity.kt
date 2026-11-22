@@ -1173,8 +1173,8 @@ val historyPhoto by produceState<androidx.compose.ui.graphics.ImageBitmap?>(
 
                         Text(
                             entry.time,
-                            color = Color.Gray,
-                            fontSize = 11.sp
+                          color = Color(entryCardStyle.secondaryTextColor),
+                           fontSize = 11.sp
                         )
                     }
 
