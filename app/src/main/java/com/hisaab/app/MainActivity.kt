@@ -1330,11 +1330,6 @@ OutlinedTextField(
                         }
 
                         val updated = currentStyle.copy(
-                            backgroundColor = readColor(bgHex),
-                            textColor = readColor(textHex),
-                            accentColor = readColor(accentHex)
-                        )
-                        val updated = currentStyle.copy(
     backgroundColor = readColor(bgHex),
     textColor = readColor(textHex),
     accentColor = readColor(accentHex),
