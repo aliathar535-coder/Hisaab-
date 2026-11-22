@@ -1354,6 +1354,14 @@ private fun SettingsPage(
             }
         }
 
+       
+item {
+    DesignStudio(
+        designs = designs,
+        onDesignChange = onDesignChange
+    )
+}
+
         item {
             GlassCard {
                 Text(
