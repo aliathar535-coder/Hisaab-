@@ -1452,7 +1452,15 @@ val updated = currentStyle.copy(
     secondaryTextColor = readColor(secondaryHex),
     widthPercent = cardWidth,
     heightDp = cardHeight,
-    verticalPadding = cardVerticalPadding
+    verticalPadding = cardVerticalPadding,
+    gradientColors = listOf(
+        readColor(gradientHex1),
+        readColor(gradientHex2),
+        readColor(gradientHex3),
+        readColor(gradientHex4),
+        readColor(gradientHex5)
+    ),
+    gradientAngle = gradientAngle
 )
 
                         if (isPiece) {
