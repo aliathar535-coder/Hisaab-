@@ -1368,7 +1368,8 @@ val updated = currentStyle.copy(
     accentColor = readColor(accentHex),
     secondaryTextColor = readColor(secondaryHex),
     widthPercent = cardWidth,
-    heightDp = cardHeight
+    heightDp = cardHeight,
+    verticalPadding = cardVerticalPadding
 )
 
                         if (isPiece) {
