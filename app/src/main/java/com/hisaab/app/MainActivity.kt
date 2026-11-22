@@ -2711,7 +2711,7 @@ private fun HistoryStyledCard(
     Column(
         modifier = Modifier
             .fillMaxWidth(
-                (style.widthPercent / 100f).coerceIn(0.3f, 1f)
+                (style.widthPercent / 100f).coerceIn(0.1f, 1f)
             )
             .then(
                 if (style.heightDp > 0f) {
