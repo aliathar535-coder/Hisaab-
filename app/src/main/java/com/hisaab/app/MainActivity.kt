@@ -406,9 +406,10 @@ piecePhotoUri = null
                 )
 
 
-2 -> 2 -> HistoryPage(
+2 -> HistoryPage(
     design = designs["history"] ?: ScreenDesign(),
     records = records,
+    entries = entries,
     onDeleteRecord = { index ->
         records = records.filterIndexed { i, _ -> i != index }
         savePieces(prefs, records)
@@ -1308,7 +1309,7 @@ private fun SettingsPage(
                
 
         item {
-            GlassCard(design = design) {
+            GlassCard(design = designs["settings"] ?: ScreenDesign()) {
                 Text(
                     "सेटिंग",
                     color = Color.White,
@@ -1324,7 +1325,7 @@ private fun SettingsPage(
         }
 
         item {
-            GlassCard(design = design) {
+            GlassCard(design = designs["settings"] ?: ScreenDesign()) {
                 Text(
                     "नया पीस रेट जोड़ें",
                     color = Color.White,
@@ -1366,7 +1367,7 @@ item {
 }
 
         item {
-            GlassCard(design = design) {
+            GlassCard(design = designs["settings"] ?: ScreenDesign()) {
                 Text(
                     "आगे के फीचर",
                     color = Color.White,
