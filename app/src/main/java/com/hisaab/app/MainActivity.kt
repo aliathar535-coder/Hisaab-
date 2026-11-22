@@ -1284,6 +1284,15 @@ val historyPhoto by produceState<androidx.compose.ui.graphics.ImageBitmap?>(
         var accentHex by remember(editingHistoryStyle) {
             mutableStateOf("#%08X".format(currentStyle.accentColor))
         }
+        var cardWidth by remember(editingHistoryStyle) {
+    mutableFloatStateOf(currentStyle.widthPercent)
+}
+
+var cardHeight by remember(editingHistoryStyle) {
+    mutableFloatStateOf(
+        currentStyle.heightDp.coerceIn(20f, 300f)
+    )
+}
 
         AlertDialog(
             onDismissRequest = { editingHistoryStyle = null },
