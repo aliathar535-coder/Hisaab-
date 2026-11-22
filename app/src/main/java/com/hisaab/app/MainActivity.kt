@@ -991,13 +991,20 @@ val historyListState = rememberLazyListState()
         ) { _, index ->
             val record = records[index]
 
-            val historyPhoto = remember(record.photoPath) {
-                if (record.photoPath.isNotBlank()) {
-                    BitmapFactory.decodeFile(
-                        record.photoPath
-                    )?.asImageBitmap()
-                } else null
-            }
+val historyPhoto by produceState<androidx.compose.ui.graphics.ImageBitmap?>(
+    initialValue = null,
+    key1 = record.photoPath
+) {
+    value = if (record.photoPath.isNotBlank()) {
+        withContext(Dispatchers.IO) {
+            BitmapFactory.decodeFile(
+                record.photoPath
+            )?.asImageBitmap()
+        }
+    } else {
+        null
+    }
+}
 
             GlassCard {
                 Column(
