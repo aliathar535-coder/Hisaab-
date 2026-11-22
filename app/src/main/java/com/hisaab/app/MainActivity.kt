@@ -1361,21 +1361,48 @@ var colorError by remember(editingHistoryStyle) {
                         singleLine = true
                     )
                     Text("छोटे टेक्स्ट का रंग")
-                    Row(
+OutlinedTextField(
+    value = secondaryHex,
+    onValueChange = { secondaryHex = it },
+    label = { Text("HEX रंग") },
+    singleLine = true
+)
+
+Text("एक्सेंट रंग")
+OutlinedTextField(
+    value = accentHex,
+    onValueChange = { accentHex = it },
+    label = { Text("HEX रंग") },
+    singleLine = true
+)
+
+Text("उदाहरण: #FF3366CC")
+
+Text("पाँच रंगों का मिक्स ग्रेडिएंट")
+
+Row(
     modifier = Modifier.fillMaxWidth(),
     horizontalArrangement = Arrangement.spacedBy(6.dp)
 ) {
-    val previewColors = currentStyle.gradientColors.take(5)
-
     repeat(5) { index ->
+        val color = when (index) {
+            0 -> gradientHex1
+            1 -> gradientHex2
+            2 -> gradientHex3
+            3 -> gradientHex4
+            else -> gradientHex5
+        }
+
         Box(
             modifier = Modifier
                 .weight(1f)
                 .height(48.dp)
                 .background(
-                    Color(previewColors.getOrElse(index) {
-                        0xFF263B59L
-                    }),
+                    runCatching {
+                        Color(color.removePrefix("#").toLong(16) or
+                            if (color.removePrefix("#").length == 6)
+                                0xFF000000L else 0L)
+                    }.getOrDefault(Color.DarkGray),
                     RoundedCornerShape(10.dp)
                 )
                 .border(
@@ -1389,29 +1416,10 @@ var colorError by remember(editingHistoryStyle) {
                 },
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = "${index + 1}",
-                color = Color.White,
-                fontWeight = FontWeight.Bold
-            )
+            Text("${index + 1}", color = Color.White)
         }
     }
-                    }
-OutlinedTextField(
-    value = secondaryHex,
-    onValueChange = { secondaryHex = it },
-    label = { Text("HEX रंग") },
-    singleLine = true
-)
-                    Text("एक्सेंट रंग")
-                    OutlinedTextField(
-                        value = accentHex,
-                        onValueChange = { accentHex = it },
-                        label = { Text("HEX रंग") },
-                        singleLine = true
-                    )
-                    Text("उदाहरण: #FF3366CC")
-                   Text("पाँच रंगों का मिक्स ग्रेडिएंट")
+}
 
 OutlinedTextField(
     value = gradientHex1,
