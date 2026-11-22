@@ -1403,13 +1403,13 @@ Row(
                             if (color.removePrefix("#").length == 6)
                                 0xFF000000L else 0L)
                     }.getOrDefault(Color.DarkGray),
-                    RoundedCornerShape(10.dp)
+                    RoundedCornerShape(16.dp)
                 )
                 .border(
                     2.dp,
                     if (activeGradientPicker == index)
                         Color.White else Color.Gray,
-                    RoundedCornerShape(10.dp)
+                    RoundedCornerShape(16.dp)
                 )
                 .clickable {
     val selectedHex = when (index) {
