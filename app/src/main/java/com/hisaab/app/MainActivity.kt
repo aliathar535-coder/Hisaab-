@@ -1574,7 +1574,7 @@ Box(
             fontSize = 11.sp
         )
     }
-}          Divider()
+}          HorizontalDivider()
 
 Text("कार्ड की चौड़ाई: ${cardWidth.toInt()}%")
 Slider(
