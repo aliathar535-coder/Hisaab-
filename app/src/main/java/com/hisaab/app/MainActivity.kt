@@ -807,7 +807,7 @@ private fun PiecePage(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         item {
-            GlassCard {
+            GlassCard(design = design) {
                 Text(
                     "पीस का हिसाब",
                     color = Color.White,
