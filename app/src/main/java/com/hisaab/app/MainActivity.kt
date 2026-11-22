@@ -1575,7 +1575,7 @@ Box(
         )
     }
 }        
-                }
+
 Spacer(
     modifier = Modifier
         .fillMaxWidth()
