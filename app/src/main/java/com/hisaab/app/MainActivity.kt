@@ -85,6 +85,22 @@ private data class ScreenDesign(
     val shading: Float = 0.35f
 )
 
+private data class HistoryCardStyle(
+    val backgroundColor: Long = 0xFF263B59L,
+    val textColor: Long = 0xFFFFFFFFL,
+    val secondaryTextColor: Long = 0xFFCFD8E8L,
+    val accentColor: Long = 0xFF65E6D2L,
+    val fontSize: Float = 16f,
+    val fontStyle: String = "bold",
+    val cornerRadius: Float = 20f,
+    val widthPercent: Float = 100f,
+    val heightDp: Float = 0f,
+    val horizontalPadding: Float = 16f,
+    val verticalPadding: Float = 16f,
+    val borderColor: Long = 0xFF65E6D2L,
+    val borderWidth: Float = 1f
+)
+
 private data class DesignPreset(
     val id: String,
     val name: String,
