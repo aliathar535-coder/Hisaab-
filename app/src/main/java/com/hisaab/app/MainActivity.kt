@@ -1574,7 +1574,14 @@ Box(
             fontSize = 11.sp
         )
     }
-}          HorizontalDivider()
+}        
+                }
+Spacer(
+    modifier = Modifier
+        .fillMaxWidth()
+        .height(1.dp)
+        .background(Color.Gray)
+)
 
 Text("कार्ड की चौड़ाई: ${cardWidth.toInt()}%")
 Slider(
