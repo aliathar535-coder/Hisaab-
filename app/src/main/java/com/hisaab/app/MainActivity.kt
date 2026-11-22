@@ -440,6 +440,24 @@ piecePhotoUri = null
     design = designs["history"] ?: ScreenDesign(),
     pieceCardStyle = pieceHistoryStyle,
     entryCardStyle = entryHistoryStyle,
+    
+    onPieceStyleChange = { style ->
+        pieceHistoryStyle = style
+        saveHistoryCardStyle(
+            prefs,
+            "piece_history_style",
+            style
+        )
+    },
+    onEntryStyleChange = { style ->
+        entryHistoryStyle = style
+        saveHistoryCardStyle(
+            prefs,
+            "entry_history_style",
+            style
+        )
+    },
+    
     records = records,
     entries = entries,
     onDeleteRecord = { index ->
