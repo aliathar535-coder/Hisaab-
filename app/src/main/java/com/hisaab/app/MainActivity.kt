@@ -1308,7 +1308,7 @@ private fun SettingsPage(
                
 
         item {
-            GlassCard {
+            GlassCard(design = design) {
                 Text(
                     "सेटिंग",
                     color = Color.White,
