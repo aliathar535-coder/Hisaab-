@@ -1353,12 +1353,12 @@ Slider(
                                 and 0xFFFFFFFFL)
                         }
 
-                        val updated = currentStyle.copy(
+val updated = currentStyle.copy(
     backgroundColor = readColor(bgHex),
     textColor = readColor(textHex),
     accentColor = readColor(accentHex),
-    secondaryTextColor = readColor(secondaryHex)
-        widthPercent = cardWidth,
+    secondaryTextColor = readColor(secondaryHex),
+    widthPercent = cardWidth,
     heightDp = cardHeight
 )
 
