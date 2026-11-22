@@ -963,6 +963,10 @@ private fun PiecePage(
 @Composable
 private fun HistoryPage(
     design: ScreenDesign,
+    
+    pieceCardStyle: HistoryCardStyle,
+    entryCardStyle: HistoryCardStyle,
+    
     records: List<PieceRecord>,
     entries: List<Entry>,
     onDeleteRecord: (Int) -> Unit,
