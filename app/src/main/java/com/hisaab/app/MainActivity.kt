@@ -1085,7 +1085,7 @@ val historyPhoto by produceState<androidx.compose.ui.graphics.ImageBitmap?>(
         ) { _, index ->
             val entry = entries[index]
 
-            GlassCard {
+            GlassCard(design = design) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
