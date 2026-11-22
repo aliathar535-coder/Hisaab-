@@ -98,7 +98,15 @@ private data class HistoryCardStyle(
     val horizontalPadding: Float = 16f,
     val verticalPadding: Float = 16f,
     val borderColor: Long = 0xFF65E6D2L,
-    val borderWidth: Float = 1f
+    val borderWidth: Float = 1f,
+    val gradientColors: List<Long> = listOf(
+        0xFF263B59L,
+        0xFF315A80L,
+        0xFF4169A1L,
+        0xFF6756A5L,
+        0xFF65E6D2L
+    ),
+    val gradientAngle: Float = 45f
 )
 
 private data class DesignPreset(
