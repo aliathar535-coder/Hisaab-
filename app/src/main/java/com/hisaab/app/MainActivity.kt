@@ -1168,7 +1168,7 @@ val historyPhoto by produceState<androidx.compose.ui.graphics.ImageBitmap?>(
                         Text(
                             (if (entry.income) "+ " else "- ") +
                                 "₹${money(entry.amount)}",
-                            color = if (entry.income) mint else red
+                            color = Color(entryCardStyle.accentColor)
                         )
 
                         Text(
