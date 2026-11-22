@@ -1458,6 +1458,68 @@ Slider(
     onValueChange = { gradientAngle = it },
     valueRange = 0f..360f
 )
+Text(
+    "LIVE CARD PREVIEW",
+    color = Color(0xFF65E6D2),
+    fontWeight = FontWeight.Bold
+)
+
+Box(
+    modifier = Modifier
+        .fillMaxWidth()
+        .height(100.dp)
+        .drawWithCache {
+            val colors = listOf(
+                gradientHex1,
+                gradientHex2,
+                gradientHex3,
+                gradientHex4,
+                gradientHex5
+            ).map {
+                val hex = it.trim().removePrefix("#")
+                val value = runCatching {
+                    if (hex.length == 6) {
+                        (0xFF000000L or hex.toLong(16))
+                    } else {
+                        hex.toLong(16)
+                    }
+                }.getOrDefault(0xFF263B59L)
+
+                Color(value)
+            }
+
+            val angle = Math.toRadians(
+                gradientAngle.toDouble()
+            )
+            val cx = size.width / 2f
+            val cy = size.height / 2f
+            val dx = kotlin.math.cos(angle).toFloat() *
+                size.width / 2f
+            val dy = kotlin.math.sin(angle).toFloat() *
+                size.height / 2f
+
+            val brush = Brush.linearGradient(
+                colors = colors,
+                start = Offset(cx - dx, cy - dy),
+                end = Offset(cx + dx, cy + dy)
+            )
+
+            onDrawBehind {
+                drawRoundRect(
+                    brush = brush,
+                    cornerRadius = CornerRadius(18.dp.toPx())
+                )
+            }
+        },
+    contentAlignment = Alignment.Center
+) {
+    Text(
+        "HISAAB DESIGN",
+        color = Color.White,
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold
+    )
+)
                     Divider()
 
 Text("कार्ड की चौड़ाई: ${cardWidth.toInt()}%")
