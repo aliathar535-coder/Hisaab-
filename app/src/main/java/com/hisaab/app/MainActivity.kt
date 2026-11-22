@@ -1009,7 +1009,7 @@ val historyPhoto by produceState<androidx.compose.ui.graphics.ImageBitmap?>(
     }
 }
 
-            GlassCard {
+            GlassCard(design = design) {
                 Column(
                     modifier = Modifier.fillMaxWidth()
                 ) {
