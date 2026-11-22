@@ -1688,6 +1688,43 @@ val updated = currentStyle.copy(
                             RoundedCornerShape(12.dp)
                         )
                 )
+                val presetColors = listOf(
+    "#FFFF0000", "#FFFF8000", "#FFFFFF00",
+    "#FF00FF00", "#FF00FFFF", "#FF0080FF",
+    "#FF0000FF", "#FF8000FF", "#FFFF00FF",
+    "#FFFF69B4", "#FFFFFFFF", "#FF202020"
+)
+
+Text("तैयार रंग चुनें")
+
+presetColors.chunked(6).forEach { colorRow ->
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+        colorRow.forEach { hex ->
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(34.dp)
+                    .background(
+                        Color(android.graphics.Color.parseColor(hex)),
+                        RoundedCornerShape(8.dp)
+                    )
+                    .clickable {
+                        val hsv = FloatArray(3)
+                        android.graphics.Color.colorToHSV(
+                            android.graphics.Color.parseColor(hex),
+                            hsv
+                        )
+                        pickerHue = hsv[0]
+                        pickerSaturation = hsv[1]
+                        pickerBrightness = hsv[2]
+                    }
+            )
+        }
+    }
+}
 
                 Text("रंग की टोन")
                 Slider(
