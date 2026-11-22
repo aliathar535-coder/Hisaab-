@@ -1543,6 +1543,97 @@ val updated = currentStyle.copy(
                 }
             }
         )
+        if (activeGradientPicker >= 0) {
+    AlertDialog(
+        onDismissRequest = {
+            activeGradientPicker = -1
+        },
+        title = {
+            Text("रंग ${activeGradientPicker + 1} चुनें")
+        },
+        text = {
+            Column {
+                val selectedColor = Color(
+                    android.graphics.Color.HSVToColor(
+                        floatArrayOf(
+                            pickerHue,
+                            pickerSaturation,
+                            pickerBrightness
+                        )
+                    )
+                )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(65.dp)
+                        .background(
+                            selectedColor,
+                            RoundedCornerShape(12.dp)
+                        )
+                )
+
+                Text("रंग की टोन")
+                Slider(
+                    value = pickerHue,
+                    onValueChange = { pickerHue = it },
+                    valueRange = 0f..360f
+                )
+
+                Text("रंग की गहराई")
+                Slider(
+                    value = pickerSaturation,
+                    onValueChange = { pickerSaturation = it },
+                    valueRange = 0f..1f
+                )
+
+                Text("चमक")
+                Slider(
+                    value = pickerBrightness,
+                    onValueChange = { pickerBrightness = it },
+                    valueRange = 0f..1f
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    val picked = android.graphics.Color
+                        .HSVToColor(
+                            floatArrayOf(
+                                pickerHue,
+                                pickerSaturation,
+                                pickerBrightness
+                            )
+                        ).toLong() and 0xFFFFFFFFL
+
+                    val hex = "#%08X".format(picked)
+
+                    when (activeGradientPicker) {
+                        0 -> gradientHex1 = hex
+                        1 -> gradientHex2 = hex
+                        2 -> gradientHex3 = hex
+                        3 -> gradientHex4 = hex
+                        4 -> gradientHex5 = hex
+                    }
+
+                    activeGradientPicker = -1
+                }
+            ) {
+                Text("रंग लगाएँ")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    activeGradientPicker = -1
+                }
+            ) {
+                Text("रद्द करें")
+            }
+        }
+    )
+        }
         }
     if (deleteRecordIndex != null) {
         AlertDialog(
