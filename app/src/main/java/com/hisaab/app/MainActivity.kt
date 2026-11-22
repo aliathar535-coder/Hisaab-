@@ -1067,7 +1067,7 @@ val historyPhoto by produceState<androidx.compose.ui.graphics.ImageBitmap?>(
     }
 }
 
-            GlassCard(design = design) {
+            HistoryStyledCard(style = pieceCardStyle) {
                 Column(
                     modifier = Modifier.fillMaxWidth()
                 ) {
