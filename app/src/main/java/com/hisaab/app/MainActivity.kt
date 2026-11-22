@@ -3063,7 +3063,18 @@ private fun loadHistoryCardStyle(
         horizontalPadding = item.optDouble("horizontalPadding", 16.0).toFloat(),
         verticalPadding = item.optDouble("verticalPadding", 16.0).toFloat(),
         borderColor = item.optLong("borderColor", 0xFF65E6D2L),
-        borderWidth = item.optDouble("borderWidth", 1.0).toFloat()
+borderWidth = item.optDouble("borderWidth", 1.0).toFloat(),
+gradientColors = item.optJSONArray("gradientColors")?.let { array ->
+    (0 until array.length()).map { array.optLong(it) }.take(5)
+}?.takeIf { it.isNotEmpty() }
+    ?: listOf(
+        0xFF263B59L,
+        0xFF315A80L,
+        0xFF4169A1L,
+        0xFF6756A5L,
+        0xFF65E6D2L
+    ),
+gradientAngle = item.optDouble("gradientAngle", 45.0).toFloat()
     )
 }
 
