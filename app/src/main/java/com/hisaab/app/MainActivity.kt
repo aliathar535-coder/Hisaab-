@@ -1360,6 +1360,45 @@ OutlinedTextField(
                         singleLine = true
                     )
                     Text("उदाहरण: #FF3366CC")
+                   Text("पाँच रंगों का मिक्स ग्रेडिएंट")
+
+OutlinedTextField(
+    value = gradientHex1,
+    onValueChange = { gradientHex1 = it },
+    label = { Text("रंग 1 HEX") },
+    singleLine = true
+)
+OutlinedTextField(
+    value = gradientHex2,
+    onValueChange = { gradientHex2 = it },
+    label = { Text("रंग 2 HEX") },
+    singleLine = true
+)
+OutlinedTextField(
+    value = gradientHex3,
+    onValueChange = { gradientHex3 = it },
+    label = { Text("रंग 3 HEX") },
+    singleLine = true
+)
+OutlinedTextField(
+    value = gradientHex4,
+    onValueChange = { gradientHex4 = it },
+    label = { Text("रंग 4 HEX") },
+    singleLine = true
+)
+OutlinedTextField(
+    value = gradientHex5,
+    onValueChange = { gradientHex5 = it },
+    label = { Text("रंग 5 HEX") },
+    singleLine = true
+)
+
+Text("ग्रेडिएंट का कोण: ${gradientAngle.toInt()}°")
+Slider(
+    value = gradientAngle,
+    onValueChange = { gradientAngle = it },
+    valueRange = 0f..360f
+)
                     Divider()
 
 Text("कार्ड की चौड़ाई: ${cardWidth.toInt()}%")
