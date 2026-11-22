@@ -1296,6 +1296,9 @@ var cardHeight by remember(editingHistoryStyle) {
 var cardVerticalPadding by remember(editingHistoryStyle) {
     mutableFloatStateOf(currentStyle.verticalPadding.coerceIn(0f, 20f))
 }
+var colorError by remember(editingHistoryStyle) {
+    mutableStateOf("")
+}
 
         AlertDialog(
             onDismissRequest = { editingHistoryStyle = null },
