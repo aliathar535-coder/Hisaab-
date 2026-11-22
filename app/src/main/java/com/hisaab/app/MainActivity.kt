@@ -1265,6 +1265,85 @@ val historyPhoto by produceState<androidx.compose.ui.graphics.ImageBitmap?>(
         }
     }
 
+        if (editingHistoryStyle != null) {
+        val isPiece = editingHistoryStyle == "piece"
+        val currentStyle = if (isPiece) pieceCardStyle else entryCardStyle
+
+        var bgHex by remember(editingHistoryStyle) {
+            mutableStateOf("#%08X".format(currentStyle.backgroundColor))
+        }
+        var textHex by remember(editingHistoryStyle) {
+            mutableStateOf("#%08X".format(currentStyle.textColor))
+        }
+        var accentHex by remember(editingHistoryStyle) {
+            mutableStateOf("#%08X".format(currentStyle.accentColor))
+        }
+
+        AlertDialog(
+            onDismissRequest = { editingHistoryStyle = null },
+            title = { Text("हिस्ट्री कार्ड डिजाइन") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("बैकग्राउंड रंग")
+                    OutlinedTextField(
+                        value = bgHex,
+                        onValueChange = { bgHex = it },
+                        label = { Text("HEX रंग") },
+                        singleLine = true
+                    )
+                    Text("मुख्य टेक्स्ट रंग")
+                    OutlinedTextField(
+                        value = textHex,
+                        onValueChange = { textHex = it },
+                        label = { Text("HEX रंग") },
+                        singleLine = true
+                    )
+                    Text("एक्सेंट रंग")
+                    OutlinedTextField(
+                        value = accentHex,
+                        onValueChange = { accentHex = it },
+                        label = { Text("HEX रंग") },
+                        singleLine = true
+                    )
+                    Text("उदाहरण: #FF3366CC")
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    try {
+                        fun readColor(value: String): Long {
+                            return (android.graphics.Color.parseColor(value).toLong()
+                                and 0xFFFFFFFFL)
+                        }
+
+                        val updated = currentStyle.copy(
+                            backgroundColor = readColor(bgHex),
+                            textColor = readColor(textHex),
+                            accentColor = readColor(accentHex)
+                        )
+
+                        if (isPiece) {
+                            onPieceStyleChange(updated)
+                        } else {
+                            onEntryStyleChange(updated)
+                        }
+                        editingHistoryStyle = null
+                    } catch (_: Exception) {
+                        // गलत HEX रंग होने पर एडिटर खुला रहेगा।
+                    }
+                }) {
+                    Text("सेव करें")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    editingHistoryStyle = null
+                }) {
+                    Text("रद्द करें")
+                }
+            }
+        )
+        }
     if (deleteRecordIndex != null) {
         AlertDialog(
             onDismissRequest = {
