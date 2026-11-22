@@ -1304,6 +1304,13 @@ val historyPhoto by produceState<androidx.compose.ui.graphics.ImageBitmap?>(
                         label = { Text("HEX रंग") },
                         singleLine = true
                     )
+                    Text("छोटे टेक्स्ट का रंग")
+OutlinedTextField(
+    value = secondaryHex,
+    onValueChange = { secondaryHex = it },
+    label = { Text("HEX रंग") },
+    singleLine = true
+)
                     Text("एक्सेंट रंग")
                     OutlinedTextField(
                         value = accentHex,
