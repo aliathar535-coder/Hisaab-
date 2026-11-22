@@ -205,13 +205,19 @@ var designs by remember {
     mutableStateOf(loadDesigns(prefs))
 }
 
+
 var pieceHistoryStyle by remember {
-    mutableStateOf(HistoryCardStyle())
+    mutableStateOf(
+        loadHistoryCardStyle(prefs, "piece_history_style")
+    )
 }
 
 var entryHistoryStyle by remember {
-    mutableStateOf(HistoryCardStyle())
+    mutableStateOf(
+        loadHistoryCardStyle(prefs, "entry_history_style")
+    )
 }
+
 
 val updateScreenDesign: (String, ScreenDesign) -> Unit =
     { screen, design ->
