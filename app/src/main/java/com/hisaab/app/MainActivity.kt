@@ -1538,8 +1538,8 @@ Box(
         fontSize = 20.sp,
         fontWeight = FontWeight.Bold
     )
-)
-                    Divider()
+
+  }          Divider()
 
 Text("कार्ड की चौड़ाई: ${cardWidth.toInt()}%")
 Slider(
