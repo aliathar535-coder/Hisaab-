@@ -406,9 +406,9 @@ piecePhotoUri = null
                 )
 
 
-2 -> HistoryPage(
+2 -> 2 -> HistoryPage(
+    design = designs["history"] ?: ScreenDesign(),
     records = records,
-    entries = entries,
     onDeleteRecord = { index ->
         records = records.filterIndexed { i, _ -> i != index }
         savePieces(prefs, records)
