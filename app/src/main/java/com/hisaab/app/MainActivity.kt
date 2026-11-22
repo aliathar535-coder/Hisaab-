@@ -367,6 +367,7 @@ piecePhotoUri = null
                 )
 
                 1 -> PiecePage(
+                    design = designs["pieces"] ?: ScreenDesign(),
                     rates = rates,
                     records = records,
                     selectedPiece = selectedPiece,
