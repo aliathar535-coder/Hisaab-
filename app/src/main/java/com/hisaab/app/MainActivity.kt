@@ -906,7 +906,7 @@ private fun PiecePage(
         }
 
         items(rates) { rate ->
-            GlassCard {
+            GlassCard(design = design) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
