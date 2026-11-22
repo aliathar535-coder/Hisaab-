@@ -991,13 +991,14 @@ private fun HistoryPage(
     pieceCardStyle: HistoryCardStyle,
     entryCardStyle: HistoryCardStyle,
     
-        records: List<PieceRecord>,
+            records: List<PieceRecord>,
     entries: List<Entry>,
     onPieceStyleChange: (HistoryCardStyle) -> Unit,
     onEntryStyleChange: (HistoryCardStyle) -> Unit,
     onDeleteRecord: (Int) -> Unit,
     onDeleteEntry: (Int) -> Unit,
     onClearAll: () -> Unit
+) {
     var deleteRecordIndex by remember { mutableStateOf<Int?>(null) }
     var deleteEntryIndex by remember { mutableStateOf<Int?>(null) }
     var showClearConfirm by remember { mutableStateOf(false) }
