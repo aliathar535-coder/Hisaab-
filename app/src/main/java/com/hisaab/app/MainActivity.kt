@@ -2811,3 +2811,53 @@ item.put("shading", design.shading)
         .putString("screen_designs", json.toString())
         .apply()
 }
+
+private fun loadHistoryCardStyle(
+    prefs: android.content.SharedPreferences,
+    key: String
+): HistoryCardStyle {
+    val item = JSONObject(
+        prefs.getString(key, "{}") ?: "{}"
+    )
+
+    return HistoryCardStyle(
+        backgroundColor = item.optLong("backgroundColor", 0xFF263B59L),
+        textColor = item.optLong("textColor", 0xFFFFFFFFL),
+        secondaryTextColor = item.optLong("secondaryTextColor", 0xFFCFD8E8L),
+        accentColor = item.optLong("accentColor", 0xFF65E6D2L),
+        fontSize = item.optDouble("fontSize", 16.0).toFloat(),
+        fontStyle = item.optString("fontStyle", "bold"),
+        cornerRadius = item.optDouble("cornerRadius", 20.0).toFloat(),
+        widthPercent = item.optDouble("widthPercent", 100.0).toFloat(),
+        heightDp = item.optDouble("heightDp", 0.0).toFloat(),
+        horizontalPadding = item.optDouble("horizontalPadding", 16.0).toFloat(),
+        verticalPadding = item.optDouble("verticalPadding", 16.0).toFloat(),
+        borderColor = item.optLong("borderColor", 0xFF65E6D2L),
+        borderWidth = item.optDouble("borderWidth", 1.0).toFloat()
+    )
+}
+
+private fun saveHistoryCardStyle(
+    prefs: android.content.SharedPreferences,
+    key: String,
+    style: HistoryCardStyle
+) {
+    val item = JSONObject()
+
+    item.put("backgroundColor", style.backgroundColor)
+    item.put("textColor", style.textColor)
+    item.put("secondaryTextColor", style.secondaryTextColor)
+    item.put("accentColor", style.accentColor)
+    item.put("fontSize", style.fontSize)
+    item.put("fontStyle", style.fontStyle)
+    item.put("cornerRadius", style.cornerRadius)
+    item.put("widthPercent", style.widthPercent)
+    item.put("heightDp", style.heightDp)
+    item.put("horizontalPadding", style.horizontalPadding)
+    item.put("verticalPadding", style.verticalPadding)
+    item.put("borderColor", style.borderColor)
+    item.put("borderWidth", style.borderWidth)
+
+    prefs.edit().putString(key, item.toString()).apply()
+}
+
