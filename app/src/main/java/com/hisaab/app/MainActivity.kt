@@ -2500,14 +2500,10 @@ private fun GlassCard(
                 }
             }
             .border(
-                width = if (enabled) 1.8.dp else 1.dp,
-                color = if (enabled) {
-                    Color.White.copy(alpha = 0.75f)
-                } else {
-                    Color.White.copy(alpha = 0.22f)
-                },
-                shape = shape
-            )
+    width = if (enabled) 1.8.dp else 0.dp,
+    color = Color.Transparent,
+    shape = shape
+)
             .padding(16.dp),
         content = content
     )
