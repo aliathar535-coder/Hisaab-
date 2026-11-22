@@ -1358,6 +1358,8 @@ Slider(
     textColor = readColor(textHex),
     accentColor = readColor(accentHex),
     secondaryTextColor = readColor(secondaryHex)
+        widthPercent = cardWidth,
+    heightDp = cardHeight
 )
 
                         if (isPiece) {
