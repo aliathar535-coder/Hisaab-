@@ -1412,8 +1412,27 @@ Row(
                     RoundedCornerShape(10.dp)
                 )
                 .clickable {
-                    activeGradientPicker = index
-                },
+    val selectedHex = when (index) {
+        0 -> gradientHex1
+        1 -> gradientHex2
+        2 -> gradientHex3
+        3 -> gradientHex4
+        else -> gradientHex5
+    }
+
+    val parsedColor = runCatching {
+        android.graphics.Color.parseColor(selectedHex)
+    }.getOrDefault(android.graphics.Color.DKGRAY)
+
+    val hsv = FloatArray(3)
+    android.graphics.Color.colorToHSV(parsedColor, hsv)
+
+    pickerHue = hsv[0]
+    pickerSaturation = hsv[1]
+    pickerBrightness = hsv[2]
+
+    activeGradientPicker = index
+},
             contentAlignment = Alignment.Center
         ) {
             Text("${index + 1}", color = Color.White)
