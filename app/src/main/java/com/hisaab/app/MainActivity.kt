@@ -1396,7 +1396,7 @@ Row(
         Box(
             modifier = Modifier
                 .weight(1f)
-                .height(48.dp)
+                .height(56.dp)
                 .background(
                     runCatching {
                         Color(color.removePrefix("#").toLong(16) or
