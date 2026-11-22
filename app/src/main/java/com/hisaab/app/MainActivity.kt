@@ -2822,10 +2822,43 @@ private fun HistoryStyledCard(
                 }
             )
             .shadow(8.dp, shape)
-            .background(
-                Color(style.backgroundColor),
-                shape
+            .drawWithCache {
+    val colors = style.gradientColors
+        .take(5)
+        .ifEmpty { listOf(style.backgroundColor) }
+        .map { Color(it) }
+
+    val angle = Math.toRadians(
+        style.gradientAngle.toDouble()
+    )
+
+    val center = Offset(
+        size.width / 2f,
+        size.height / 2f
+    )
+
+    val dx = kotlin.math.cos(angle).toFloat() *
+        size.width / 2f
+
+    val dy = kotlin.math.sin(angle).toFloat() *
+        size.height / 2f
+
+    val brush = Brush.linearGradient(
+        colors = colors,
+        start = Offset(center.x - dx, center.y - dy),
+        end = Offset(center.x + dx, center.y + dy)
+    )
+
+    onDrawBehind {
+        drawRoundRect(
+            brush = brush,
+            cornerRadius = CornerRadius(
+                style.cornerRadius.dp.toPx()
             )
+        )
+    }
+            }
+            
             .border(
                 style.borderWidth.dp,
                 Color(style.borderColor),
