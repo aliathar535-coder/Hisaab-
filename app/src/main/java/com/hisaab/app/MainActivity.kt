@@ -1087,7 +1087,7 @@ val historyPhoto by produceState<androidx.compose.ui.graphics.ImageBitmap?>(
 
                             Text(
                                 "${record.quantity} पीस × ₹${money(record.rate)}",
-                                color = Color.LightGray
+                            color = Color(pieceCardStyle.secondaryTextColor)
                             )
 
                             Text(
