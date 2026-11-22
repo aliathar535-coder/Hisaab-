@@ -1324,7 +1324,7 @@ private fun SettingsPage(
         }
 
         item {
-            GlassCard {
+            GlassCard(design = design) {
                 Text(
                     "नया पीस रेट जोड़ें",
                     color = Color.White,
@@ -1366,7 +1366,7 @@ item {
 }
 
         item {
-            GlassCard {
+            GlassCard(design = design) {
                 Text(
                     "आगे के फीचर",
                     color = Color.White,
