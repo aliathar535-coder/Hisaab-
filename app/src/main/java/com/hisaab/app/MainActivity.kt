@@ -1483,10 +1483,22 @@ Text(
     fontWeight = FontWeight.Bold
 )
 
+val previewTextColor = runCatching {
+    Color(android.graphics.Color.parseColor(textHex))
+}.getOrDefault(Color.White)
+
+val previewSecondaryColor = runCatching {
+    Color(android.graphics.Color.parseColor(secondaryHex))
+}.getOrDefault(Color.LightGray)
+
+val previewAccentColor = runCatching {
+    Color(android.graphics.Color.parseColor(accentHex))
+}.getOrDefault(Color.Yellow)
+
 Box(
     modifier = Modifier
-        .fillMaxWidth()
-        .height(100.dp)
+        .fillMaxWidth(cardWidth.coerceIn(20f, 100f) / 100f)
+        .height(cardHeight.coerceIn(90f, 220f).dp)
         .drawWithCache {
             val colors = listOf(
                 gradientHex1,
@@ -1498,7 +1510,7 @@ Box(
                 val hex = it.trim().removePrefix("#")
                 val value = runCatching {
                     if (hex.length == 6) {
-                        (0xFF000000L or hex.toLong(16))
+                        0xFF000000L or hex.toLong(16)
                     } else {
                         hex.toLong(16)
                     }
@@ -1507,15 +1519,11 @@ Box(
                 Color(value)
             }
 
-            val angle = Math.toRadians(
-                gradientAngle.toDouble()
-            )
+            val angle = Math.toRadians(gradientAngle.toDouble())
             val cx = size.width / 2f
             val cy = size.height / 2f
-            val dx = kotlin.math.cos(angle).toFloat() *
-                size.width / 2f
-            val dy = kotlin.math.sin(angle).toFloat() *
-                size.height / 2f
+            val dx = kotlin.math.cos(angle).toFloat() * size.width / 2f
+            val dy = kotlin.math.sin(angle).toFloat() * size.height / 2f
 
             val brush = Brush.linearGradient(
                 colors = colors,
@@ -1529,17 +1537,39 @@ Box(
                     cornerRadius = CornerRadius(18.dp.toPx())
                 )
             }
-        },
-    contentAlignment = Alignment.Center
+        }
+        .padding(12.dp)
 ) {
-    Text(
-        "HISAAB DESIGN",
-        color = Color.White,
-        fontSize = 20.sp,
-        fontWeight = FontWeight.Bold
-    )
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceEvenly
+    ) {
+        Text(
+            "नमूना हिस्ट्री कार्ड",
+            color = previewTextColor,
+            fontWeight = FontWeight.Bold,
+            fontSize = 17.sp
+        )
 
-  }          Divider()
+        Text(
+            "12 पीस × ₹50",
+            color = previewSecondaryColor
+        )
+
+        Text(
+            "कुल रकम ₹600",
+            color = previewAccentColor,
+            fontWeight = FontWeight.Bold,
+            fontSize = 19.sp
+        )
+
+        Text(
+            "23-11-2026  •  नमूना रिकॉर्ड",
+            color = previewSecondaryColor,
+            fontSize = 11.sp
+        )
+    }
+}          Divider()
 
 Text("कार्ड की चौड़ाई: ${cardWidth.toInt()}%")
 Slider(
