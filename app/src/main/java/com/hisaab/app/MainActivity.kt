@@ -1328,6 +1328,21 @@ OutlinedTextField(
                         singleLine = true
                     )
                     Text("उदाहरण: #FF3366CC")
+                    Divider()
+
+Text("कार्ड की चौड़ाई: ${cardWidth.toInt()}%")
+Slider(
+    value = cardWidth,
+    onValueChange = { cardWidth = it },
+    valueRange = 10f..100f
+)
+
+Text("कार्ड की ऊँचाई: ${cardHeight.toInt()} px")
+Slider(
+    value = cardHeight,
+    onValueChange = { cardHeight = it },
+    valueRange = 20f..300f
+)
                 }
             },
             confirmButton = {
