@@ -1355,6 +1355,12 @@ Slider(
     onValueChange = { cardVerticalPadding = it },
     valueRange = 0f..20f
 )
+if (colorError.isNotEmpty()) {
+    Text(
+        text = colorError,
+        color = Color(0xFFFF6B6B)
+    )
+}
                 }
             },
             confirmButton = {
