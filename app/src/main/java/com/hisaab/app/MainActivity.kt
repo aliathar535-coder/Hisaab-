@@ -1346,6 +1346,12 @@ Slider(
     onValueChange = { cardHeight = it },
     valueRange = 20f..300f
 )
+Text("ऊपर-नीचे खाली जगह: ${cardVerticalPadding.toInt()} px")
+Slider(
+    value = cardVerticalPadding,
+    onValueChange = { cardVerticalPadding = it },
+    valueRange = 0f..20f
+)
                 }
             },
             confirmButton = {
