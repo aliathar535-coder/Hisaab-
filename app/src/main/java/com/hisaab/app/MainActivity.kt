@@ -1397,8 +1397,8 @@ val updated = currentStyle.copy(
                         }
                         editingHistoryStyle = null
                     } catch (_: Exception) {
-                        // गलत HEX रंग होने पर एडिटर खुला रहेगा।
-                    }
+    colorError = "HEX रंग सही नहीं है। उदाहरण: #FF3366CC"
+}
                 }) {
                     Text("सेव करें")
                 }
