@@ -977,8 +977,6 @@ private fun HistoryPage(
     var deleteEntryIndex by remember { mutableStateOf<Int?>(null) }
     var showClearConfirm by remember { mutableStateOf(false) }
     var zoomPhotoPath by remember { mutableStateOf<String?>(null) }
-    var pieceCardStyle by remember { mutableStateOf(HistoryCardStyle()) }
-    var entryCardStyle by remember { mutableStateOf(HistoryCardStyle()) }
     var editingHistoryStyle by remember { mutableStateOf<String?>(null) }
 
     BackHandler(enabled = zoomPhotoPath != null) {
