@@ -1278,6 +1278,9 @@ val historyPhoto by produceState<androidx.compose.ui.graphics.ImageBitmap?>(
         var textHex by remember(editingHistoryStyle) {
             mutableStateOf("#%08X".format(currentStyle.textColor))
         }
+        var secondaryHex by remember(editingHistoryStyle) {
+            mutableStateOf("#%08X".format(currentStyle.secondaryTextColor))
+        }
         var accentHex by remember(editingHistoryStyle) {
             mutableStateOf("#%08X".format(currentStyle.accentColor))
         }
