@@ -1292,6 +1292,24 @@ val historyPhoto by produceState<androidx.compose.ui.graphics.ImageBitmap?>(
         var accentHex by remember(editingHistoryStyle) {
             mutableStateOf("#%08X".format(currentStyle.accentColor))
         }
+        var gradientHex1 by remember(editingHistoryStyle) {
+    mutableStateOf("#%08X".format(currentStyle.gradientColors.getOrElse(0) { 0xFF263B59L }))
+}
+var gradientHex2 by remember(editingHistoryStyle) {
+    mutableStateOf("#%08X".format(currentStyle.gradientColors.getOrElse(1) { 0xFF315A80L }))
+}
+var gradientHex3 by remember(editingHistoryStyle) {
+    mutableStateOf("#%08X".format(currentStyle.gradientColors.getOrElse(2) { 0xFF4169A1L }))
+}
+var gradientHex4 by remember(editingHistoryStyle) {
+    mutableStateOf("#%08X".format(currentStyle.gradientColors.getOrElse(3) { 0xFF6756A5L }))
+}
+var gradientHex5 by remember(editingHistoryStyle) {
+    mutableStateOf("#%08X".format(currentStyle.gradientColors.getOrElse(4) { 0xFF65E6D2L }))
+}
+var gradientAngle by remember(editingHistoryStyle) {
+    mutableFloatStateOf(currentStyle.gradientAngle)
+}
         var cardWidth by remember(editingHistoryStyle) {
     mutableFloatStateOf(currentStyle.widthPercent)
 }
