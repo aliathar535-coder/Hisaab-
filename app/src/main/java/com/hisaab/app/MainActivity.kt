@@ -2659,7 +2659,44 @@ private fun GlassCard(
         content = content
     )
 }
+@Composable
+private fun HistoryStyledCard(
+    style: HistoryCardStyle,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    val shape = RoundedCornerShape(
+        style.cornerRadius.dp
+    )
 
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(
+                (style.widthPercent / 100f).coerceIn(0.3f, 1f)
+            )
+            .then(
+                if (style.heightDp > 0f) {
+                    Modifier.heightIn(min = style.heightDp.dp)
+                } else {
+                    Modifier
+                }
+            )
+            .shadow(8.dp, shape)
+            .background(
+                Color(style.backgroundColor),
+                shape
+            )
+            .border(
+                style.borderWidth.dp,
+                Color(style.borderColor),
+                shape
+            )
+            .padding(
+                horizontal = style.horizontalPadding.dp,
+                vertical = style.verticalPadding.dp
+            ),
+        content = content
+    )
+}
 
 private fun now(): String {
     return SimpleDateFormat(
