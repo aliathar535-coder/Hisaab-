@@ -2314,11 +2314,11 @@ private fun GlassCard(
     val enabled = design.enabled
 
     val glow = design.glow.coerceIn(0f, 1f)
-    val depth = if (enabled) {
-        design.depth.coerceIn(12f, 30f)
-    } else {
-        5f
-    }
+  val depth = if (enabled) {
+    design.depth.coerceIn(12f, 30f)
+} else {
+    0f
+  }
 
     // OFF: keep user's selected colors solid.
     // ON: translucent glass color.
