@@ -1310,6 +1310,21 @@ var gradientHex5 by remember(editingHistoryStyle) {
 var gradientAngle by remember(editingHistoryStyle) {
     mutableFloatStateOf(currentStyle.gradientAngle)
 }
+var activeGradientPicker by remember(editingHistoryStyle) {
+    mutableStateOf(-1)
+}
+
+var pickerHue by remember {
+    mutableFloatStateOf(210f)
+}
+
+var pickerSaturation by remember {
+    mutableFloatStateOf(0.8f)
+}
+
+var pickerBrightness by remember {
+    mutableFloatStateOf(0.9f)
+}
         var cardWidth by remember(editingHistoryStyle) {
     mutableFloatStateOf(currentStyle.widthPercent)
 }
