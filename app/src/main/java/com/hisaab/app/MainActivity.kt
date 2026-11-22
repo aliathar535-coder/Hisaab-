@@ -1161,7 +1161,8 @@ val historyPhoto by produceState<androidx.compose.ui.graphics.ImageBitmap?>(
                     ) {
                         Text(
                             entry.title,
-                            color = Color.White
+                            color = Color(entryCardStyle.textColor),
+                            fontSize = entryCardStyle.fontSize.sp
                         )
 
                         Text(
