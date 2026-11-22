@@ -1358,9 +1358,18 @@ Slider(
                 TextButton(onClick = {
                     try {
                         fun readColor(value: String): Long {
-                            return (android.graphics.Color.parseColor(value).toLong()
-                                and 0xFFFFFFFFL)
-                        }
+    var hex = value.trim().removePrefix("#")
+
+    if (hex.length == 6) {
+        hex = "FF$hex"
+    }
+
+    require(hex.length == 8 && hex.all {
+        it in "0123456789ABCDEFabcdef"
+    })
+
+    return hex.toLong(16)
+}
 
 val updated = currentStyle.copy(
     backgroundColor = readColor(bgHex),
