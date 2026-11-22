@@ -1088,20 +1088,349 @@ private fun HistoryPage(
     if (showClearConfirm) {
         AlertDialog(
             onDismissRequest = { showClearConfirm = false },
-            title = { Text("पूरी हिस्ट्री साफ करें?") },
+
+@Composable
+private fun HistoryPage(
+    records: List<PieceRecord>,
+    entries: List<Entry>,
+    onDeleteRecord: (Int) -> Unit,
+    onDeleteEntry: (Int) -> Unit,
+    onClearAll: () -> Unit
+) {
+    var deleteRecordIndex by remember { mutableStateOf<Int?>(null) }
+    var deleteEntryIndex by remember { mutableStateOf<Int?>(null) }
+    var showClearConfirm by remember { mutableStateOf(false) }
+    var zoomPhotoPath by remember { mutableStateOf<String?>(null) }
+
+    BackHandler(enabled = zoomPhotoPath != null) {
+        zoomPhotoPath = null
+    }
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .navigationBarsPadding(),
+        contentPadding = PaddingValues(
+            start = 16.dp,
+            top = 16.dp,
+            end = 16.dp,
+            bottom = 110.dp
+        ),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        item {
+            Text(
+                "पूरी हिस्ट्री",
+                color = Color.White,
+                fontSize = 23.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            Button(
+                onClick = { showClearConfirm = true },
+                enabled = records.isNotEmpty() || entries.isNotEmpty(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF9A4355)
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("पूरी हिस्ट्री साफ करें")
+            }
+        }
+
+        itemsIndexed(
+            records.indices.reversed().toList(),
+            key = { _, index ->
+                "piece_${records[index].time}_${records[index].name}_$index"
+            }
+        ) { _, index ->
+            val record = records[index]
+
+            val historyPhoto = remember(record.photoPath) {
+                if (record.photoPath.isNotBlank()) {
+                    BitmapFactory.decodeFile(
+                        record.photoPath
+                    )?.asImageBitmap()
+                } else null
+            }
+
+            GlassCard {
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(
+                            Modifier.weight(1f)
+                        ) {
+                            Text(
+                                record.name,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            Text(
+                                "${record.quantity} पीस × ₹${money(record.rate)}",
+                                color = Color.LightGray
+                            )
+
+                            Text(
+                                "कुल ₹${money(record.total)}",
+                                color = mint,
+                                fontSize = 19.sp
+                            )
+
+                            Text(
+                                record.time,
+                                color = Color.Gray,
+                                fontSize = 11.sp
+                            )
+                        }
+
+                        TextButton(
+                            onClick = {
+                                deleteRecordIndex = index
+                            }
+                        ) {
+                            Text("🗑 हटाएँ", color = red)
+                        }
+                    }
+
+                    historyPhoto?.let { photo ->
+                        Spacer(Modifier.height(10.dp))
+
+                        Image(
+                            bitmap = photo,
+                            contentDescription = "फोटो बड़ी करके देखें",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(180.dp)
+                                .clickable {
+                                    zoomPhotoPath = record.photoPath
+                                },
+                            contentScale = ContentScale.Crop
+                        )
+
+                        Text(
+                            "फोटो बड़ी देखने के लिए टच करें",
+                            color = Color.LightGray,
+                            fontSize = 11.sp
+                        )
+                    }
+                }
+            }
+        }
+
+        itemsIndexed(
+            entries.indices.reversed().toList(),
+            key = { _, index ->
+                "entry_${entries[index].time}_${entries[index].title}_$index"
+            }
+        ) { _, index ->
+            val entry = entries[index]
+
+            GlassCard {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(
+                        Modifier.weight(1f)
+                    ) {
+                        Text(
+                            entry.title,
+                            color = Color.White
+                        )
+
+                        Text(
+                            (if (entry.income) "+ " else "- ") +
+                                "₹${money(entry.amount)}",
+                            color = if (entry.income) mint else red
+                        )
+
+                        Text(
+                            entry.time,
+                            color = Color.Gray,
+                            fontSize = 11.sp
+                        )
+                    }
+
+                    TextButton(
+                        onClick = {
+                            deleteEntryIndex = index
+                        }
+                    ) {
+                        Text("🗑 हटाएँ", color = red)
+                    }
+                }
+            }
+        }
+
+        item {
+            Spacer(Modifier.height(24.dp))
+            Text(
+                "— हिस्ट्री समाप्त —",
+                color = Color.Gray,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            )
+        }
+    }
+
+    if (zoomPhotoPath != null) {
+        val zoomBitmap = remember(zoomPhotoPath) {
+            zoomPhotoPath?.let {
+                BitmapFactory.decodeFile(it)?.asImageBitmap()
+            }
+        }
+
+        if (zoomBitmap != null) {
+            Dialog(
+                onDismissRequest = {
+                    zoomPhotoPath = null
+                },
+                properties = DialogProperties(
+                    usePlatformDefaultWidth = false
+                )
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.97f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        bitmap = zoomBitmap,
+                        contentDescription = "बड़ी फोटो",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(0.85f)
+                            .padding(8.dp),
+                        contentScale = ContentScale.Fit
+                    )
+
+                    TextButton(
+                        onClick = {
+                            zoomPhotoPath = null
+                        },
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(12.dp)
+                    ) {
+                        Text(
+                            "✕",
+                            color = Color.White,
+                            fontSize = 30.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Text(
+                        "बंद करने के लिए ✕ या मोबाइल का Back दबाएँ",
+                        color = Color.White,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 24.dp),
+                        fontSize = 12.sp
+                    )
+                }
+            }
+        }
+    }
+
+    if (deleteRecordIndex != null) {
+        AlertDialog(
+            onDismissRequest = {
+                deleteRecordIndex = null
+            },
+            title = { Text("पीस हिस्ट्री हटाएँ?") },
             text = {
-                Text("सभी पीस एंट्री, कमाई और खर्च की हिस्ट्री डिलीट हो जाएगी। क्या आप पक्का चाहते हैं?")
+                Text("क्या आप यह पीस एंट्री डिलीट करना चाहते हैं?")
             },
             confirmButton = {
-                TextButton(onClick = {
-                    onClearAll()
-                    showClearConfirm = false
-                }) { Text("हाँ, सब साफ करें") }
+                TextButton(
+                    onClick = {
+                        deleteRecordIndex?.let(onDeleteRecord)
+                        deleteRecordIndex = null
+                    }
+                ) {
+                    Text("हाँ, हटाएँ")
+                }
             },
             dismissButton = {
-                TextButton(onClick = {
-                    showClearConfirm = false
-                }) { Text("रद्द करें") }
+                TextButton(
+                    onClick = {
+                        deleteRecordIndex = null
+                    }
+                ) {
+                    Text("नहीं")
+                }
+            }
+        )
+    }
+
+    if (deleteEntryIndex != null) {
+        AlertDialog(
+            onDismissRequest = {
+                deleteEntryIndex = null
+            },
+            title = { Text("हिस्ट्री हटाएँ?") },
+            text = {
+                Text("क्या आप यह कमाई/खर्च की एंट्री डिलीट करना चाहते हैं?")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        deleteEntryIndex?.let(onDeleteEntry)
+                        deleteEntryIndex = null
+                    }
+                ) {
+                    Text("हाँ, हटाएँ")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        deleteEntryIndex = null
+                    }
+                ) {
+                    Text("नहीं")
+                }
+            }
+        )
+    }
+
+    if (showClearConfirm) {
+        AlertDialog(
+            onDismissRequest = {
+                showClearConfirm = false
+            },
+            title = { Text("पूरी हिस्ट्री साफ करें?") },
+            text = {
+                Text(
+                    "सभी पीस एंट्री, कमाई और खर्च की हिस्ट्री डिलीट हो जाएगी। क्या आप पक्का चाहते हैं?"
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onClearAll()
+                        showClearConfirm = false
+                    }
+                ) {
+                    Text("हाँ, सब साफ करें")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showClearConfirm = false
+                    }
+                ) {
+                    Text("रद्द करें")
+                }
             }
         )
     }
