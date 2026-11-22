@@ -1079,8 +1079,10 @@ val historyPhoto by produceState<androidx.compose.ui.graphics.ImageBitmap?>(
                         ) {
                             Text(
                                 record.name,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
+                                color = Color(pieceCardStyle.textColor),
+
+                                fontWeight = FontWeight.Bold,
+                                fontSize = pieceCardStyle.fontSize.sp
                             )
 
                             Text(
