@@ -1175,6 +1175,13 @@ val historyPhoto by produceState<androidx.compose.ui.graphics.ImageBitmap?>(
                         )
                     }
 
+                                       TextButton(
+                        onClick = {
+                            editingHistoryStyle = "entry"
+                        }
+                    ) {
+                        Text("⚙ डिजाइन", color = Color.Cyan)
+                                       }
                     TextButton(
                         onClick = {
                             deleteEntryIndex = index
