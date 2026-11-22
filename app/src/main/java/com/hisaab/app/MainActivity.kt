@@ -432,6 +432,8 @@ piecePhotoUri = null
 
 2 -> HistoryPage(
     design = designs["history"] ?: ScreenDesign(),
+    pieceCardStyle = pieceHistoryStyle,
+    entryCardStyle = entryHistoryStyle,
     records = records,
     entries = entries,
     onDeleteRecord = { index ->
