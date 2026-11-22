@@ -788,6 +788,7 @@ private fun HomePage(
 
 @Composable
 private fun PiecePage(
+    design: ScreenDesign,
     rates: List<PieceRate>,
     records: List<PieceRecord>,
     selectedPiece: String,
