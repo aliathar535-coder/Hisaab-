@@ -2895,52 +2895,7 @@ if (manualColorDialogOpen) {
                             Color(pickedColor),
                             RoundedCornerShape(12.dp)
                         )
-                )
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    manualColors =
-                        manualColors.toMutableList().also {
-                            it[selectedManualColor] = pickedColor
-                        }
 
-                    manualColorDialogOpen = false
-                }
-            ) {
-                Text("रंग सेव करें")
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    manualColorDialogOpen = false
-                }
-            ) {
-                Text("रद्द करें")
-            }
-        }
-    )
-}
-
-Button(
-    onClick = {
-        onDesignChange(
-            selectedScreen,
-            design.copy(
-                color1 = manualColors.first(),
-                color2 = manualColors.getOrElse(1) {
-                    manualColors.first()
-                },
-                colors = manualColors
-            )
-        )
-    },
-    modifier = Modifier.fillMaxWidth()
-) {
-    Text("मेरे Manual Colors APPLY करें")
-}
                     }
         Text(
             "किस स्क्रीन का डिजाइन बदलना है?",
