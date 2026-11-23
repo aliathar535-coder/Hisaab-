@@ -2521,6 +2521,150 @@ selectedPreset?.let { preset ->
         }
 
         Divider(color = Color(0xFF52718A))
+        
+Text(
+    "MANUAL COLOUR STUDIO — 5 COLOURS",
+    color = Color(0xFF8FEAFF),
+    fontWeight = FontWeight.Bold
+)
+
+Text(
+    "हर बॉक्स का रंग अलग-अलग बदल सकते हो।",
+    color = Color.LightGray,
+    fontSize = 12.sp
+)
+
+Row(
+    modifier = Modifier.fillMaxWidth(),
+    horizontalArrangement = Arrangement.spacedBy(6.dp)
+) {
+    manualColors.forEachIndexed { index, value ->
+        Card(
+            onClick = {
+                selectedManualColor = index
+
+                val hsv = FloatArray(3)
+                android.graphics.Color.colorToHSV(
+                    value.toInt(),
+                    hsv
+                )
+
+                hue = hsv[0]
+                saturation = hsv[1]
+                brightness = hsv[2]
+                manualColorDialogOpen = true
+            },
+            modifier = Modifier
+                .weight(1f)
+                .height(58.dp),
+            shape = RoundedCornerShape(10.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(value)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    "${index + 1}",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+            }
+        }
+    }
+}
+
+if (manualColorDialogOpen) {
+    val pickedColor =
+        android.graphics.Color.HSVToColor(
+            floatArrayOf(hue, saturation, brightness)
+        ).toLong() and 0xFFFFFFFFL
+
+    AlertDialog(
+        onDismissRequest = {
+            manualColorDialogOpen = false
+        },
+        title = {
+            Text("रंग ${selectedManualColor + 1} बदलें")
+        },
+        text = {
+            Column {
+                Text("Hue: ${hue.toInt()}°")
+                Slider(
+                    value = hue,
+                    onValueChange = { hue = it },
+                    valueRange = 0f..360f
+                )
+
+                Text("Saturation: ${(saturation * 100).toInt()}%")
+                Slider(
+                    value = saturation,
+                    onValueChange = { saturation = it },
+                    valueRange = 0f..1f
+                )
+
+                Text("Brightness: ${(brightness * 100).toInt()}%")
+                Slider(
+                    value = brightness,
+                    onValueChange = { brightness = it },
+                    valueRange = 0f..1f
+                )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(65.dp)
+                        .background(
+                            Color(pickedColor),
+                            RoundedCornerShape(12.dp)
+                        )
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    manualColors =
+                        manualColors.toMutableList().also {
+                            it[selectedManualColor] = pickedColor
+                        }
+                    manualColorDialogOpen = false
+                }
+            ) {
+                Text("रंग सेव करें")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    manualColorDialogOpen = false
+                }
+            ) {
+                Text("रद्द करें")
+            }
+        }
+    )
+}
+
+Button(
+    onClick = {
+        onDesignChange(
+            selectedScreen,
+            design.copy(
+                color1 = manualColors[0],
+                color2 = manualColors[1],
+                colors = manualColors
+            )
+        )
+    },
+    modifier = Modifier.fillMaxWidth()
+) {
+    Text("पाँचों रंग APPLY करें")
+}
+
+Divider(color = Color(0xFF52718A))
 
         Text(
             "किस स्क्रीन का डिजाइन बदलना है?",
