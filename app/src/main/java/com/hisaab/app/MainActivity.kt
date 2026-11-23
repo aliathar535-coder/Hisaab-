@@ -2655,56 +2655,138 @@ selectedPreset?.let { preset ->
             ).toLong() and 0xFFFFFFFFL
 
         OutlinedTextField(
-            value = manualHex,
-            onValueChange = {
-                manualHex = it.uppercase()
-                    .filter { ch ->
-                        ch in "0123456789ABCDEF"
-                    }.take(6)
-            },
-            label = {
-                Text("अपना HEX रंग लिखें")
-            },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
-        )
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+Text(
+    "MANUAL COLOR STUDIO — 5 COLOUR MIXING",
+    color = Color(0xFF8FEAFF),
+    fontWeight = FontWeight.Bold
+)
+
+Text(
+    "किसी भी रंग के बॉक्स को छूकर उसका Colour Studio खोलें।",
+    color = Color.LightGray,
+    fontSize = 12.sp
+)
+
+Row(
+    modifier = Modifier.fillMaxWidth(),
+    horizontalArrangement = Arrangement.spacedBy(6.dp)
+) {
+    manualColors.forEachIndexed { index, value ->
+        Card(
+            onClick = {
+                selectedManualColor = index
+
+                val hsv = FloatArray(3)
+                android.graphics.Color.colorToHSV(
+                    value.toInt(),
+                    hsv
+                )
+
+                hue = hsv[0]
+                saturation = hsv[1]
+                brightness = hsv[2]
+                manualColorDialogOpen = true
+            },
+            modifier = Modifier
+                .weight(1f)
+                .height(58.dp),
+            shape = RoundedCornerShape(10.dp)
         ) {
             Box(
                 modifier = Modifier
-                    .size(45.dp)
-                    .background(
-                        Color(
-                            if (manualHex.length == 6) {
-                                ("FF" + manualHex).toLong(16)
-                            } else {
-                                pickedColor
-                            }
-                        ),
-                        RoundedCornerShape(8.dp)
-                    )
-            )
+                    .fillMaxSize()
+                    .background(Color(value)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    "${index + 1}",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+            }
+        }
+    }
+}
 
-            Button(
+if (manualColorDialogOpen) {
+    val pickedColor =
+        android.graphics.Color.HSVToColor(
+            floatArrayOf(hue, saturation, brightness)
+        ).toLong() and 0xFFFFFFFFL
+
+    AlertDialog(
+        onDismissRequest = {
+            manualColorDialogOpen = false
+        },
+        title = {
+            Text("रंग ${selectedManualColor + 1} Colour Studio")
+        },
+        text = {
+            Column {
+                Text("Hue: ${hue.toInt()}°")
+                Slider(
+                    value = hue,
+                    onValueChange = { hue = it },
+                    valueRange = 0f..360f
+                )
+
+                Text(
+                    "Saturation: ${(saturation * 100).toInt()}%"
+                )
+                Slider(
+                    value = saturation,
+                    onValueChange = { saturation = it },
+                    valueRange = 0f..1f
+                )
+
+                Text(
+                    "Brightness: ${(brightness * 100).toInt()}%"
+                )
+                Slider(
+                    value = brightness,
+                    onValueChange = { brightness = it },
+                    valueRange = 0f..1f
+                )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(65.dp)
+                        .background(
+                            Color(pickedColor),
+                            RoundedCornerShape(12.dp)
+                        )
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
                 onClick = {
-                    val chosen = if (manualHex.length == 6) {
-                        ("FF" + manualHex).toLong(16)
-                    } else {
-                        pickedColor
-                    }
+                    manualColors =
+                        manualColors.toMutableList().also {
+                            it[selectedManualColor] = pickedColor
+                        }
 
-                    manualColors = manualColors.toMutableList().also {
-                        it[selectedManualColor] = chosen
-                    }
-                    manualHex = ""
+                    manualColorDialogOpen = false
                 }
             ) {
                 Text("रंग सेव करें")
             }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    manualColorDialogOpen = false
+                }
+            ) {
+                Text("रद्द करें")
+            }
         }
+    )
+}
+
 
         Button(
             onClick = {
