@@ -405,7 +405,7 @@ piecePhotoUri = null
                     }
                 )
 
-                1 -> PiecePage(
+                2 -> PiecePage(
                     design = designs["pieces"] ?: ScreenDesign(),
                     rates = rates,
                     records = records,
@@ -445,7 +445,7 @@ piecePhotoUri = null
                 )
 
 
-2 -> HistoryPage(
+1 -> HistoryPage(
     design = designs["history"] ?: ScreenDesign(),
     pieceCardStyle = pieceHistoryStyle,
     entryCardStyle = entryHistoryStyle,
