@@ -109,6 +109,24 @@ private data class HistoryCardStyle(
     val gradientAngle: Float = 45f
 )
 
+private data class MainCardStyle(
+    val widthPercent: Float = 100f,
+    val heightDp: Float = 0f,
+    val backgroundColor: Long = 0xFF263B59L,
+    val textColor: Long = 0xFFFFFFFFL,
+    val fontSize: Float = 16f,
+    val fontStyle: String = "bold",
+    val text3D: Boolean = true,
+    val cornerRadius: Float = 25f,
+    val gradientColors: List<Long> = listOf(
+        0xFF263B59L,
+        0xFF315A80L,
+        0xFF4169A1L,
+        0xFF6756A5L,
+        0xFF65E6D2L
+    )
+)
+
 private data class DesignPreset(
     val id: String,
     val name: String,
