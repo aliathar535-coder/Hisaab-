@@ -2395,7 +2395,7 @@ selectedPreset?.let { preset ->
         Text("इस स्क्रीन पर APPLY करें")
     }
 }
-
+}
         Text(
             "READY-MADE COLOR GALLERY — 30",
             color = Color(0xFF8FEAFF),
