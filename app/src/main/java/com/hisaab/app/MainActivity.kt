@@ -2101,15 +2101,7 @@ private fun DesignStudio(
         mutableStateOf<List<Long>?>(null)
     }
 
-    var manualColors by remember(selectedScreen, design.colors) {
-        mutableStateOf(
-            design.colors.take(5).ifEmpty {
-                listOf(design.color1, design.color2)
-            }
-        )
-    }
-
-
+    
 var manualColors by remember(selectedScreen, design.colors) {
     mutableStateOf(
         (
@@ -2136,6 +2128,7 @@ var manualColorDialogOpen by remember {
 var hue by remember { mutableFloatStateOf(210f) }
 var saturation by remember { mutableFloatStateOf(0.72f) }
 var brightness by remember { mutableFloatStateOf(0.92f) }
+
 
     val colorGallery = remember {
         (1..30).map { index ->
