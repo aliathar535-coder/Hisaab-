@@ -2221,6 +2221,7 @@ private fun DesignStudio(
             }
         }
 
+        
         selectedGradientStyle?.let { style ->
             Text(
                 "PREVIEW: ${style.name}",
@@ -2234,18 +2235,16 @@ private fun DesignStudio(
                     .height(115.dp)
                     .background(
                         when (style.effect) {
-    "radial" -> Brush.radialGradient(
-        colors = style.colors.map { Color(it) }
-    )
-
-    "sweep" -> Brush.sweepGradient(
-        colors = style.colors.map { Color(it) }
-    )
-
-    else -> Brush.linearGradient(
-        colors = style.colors.map { Color(it) }
-    )
-},
+                            "radial" -> Brush.radialGradient(
+                                colors = style.colors.map { Color(it) }
+                            )
+                            "sweep" -> Brush.sweepGradient(
+                                colors = style.colors.map { Color(it) }
+                            )
+                            else -> Brush.linearGradient(
+                                colors = style.colors.map { Color(it) }
+                            )
+                        },
                         RoundedCornerShape(16.dp)
                     ),
                 contentAlignment = Alignment.Center
@@ -2278,12 +2277,14 @@ private fun DesignStudio(
                 Text("इस Gradient को APPLY करें")
             }
         }
-        
-        Text)  }
+        }
+
+        Text(
             "चुनी हुई कैटेगरी: $selectedCategory",
             color = Color.White,
             fontWeight = FontWeight.Bold
         )
+        
         Text(
     "DESIGN GALLERY — 30 STYLES",
     color = Color(0xFF8FEAFF),
