@@ -126,6 +126,7 @@ private val designCategories = listOf(
     "3D Shape & Surface",
     "Light & Effects",
     "Gradient",
+    "Colors",
     "Shading",
     "Border & Edge",
     "Shadow",
