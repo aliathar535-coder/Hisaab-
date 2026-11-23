@@ -2161,7 +2161,8 @@ private fun DesignStudio(
                 )
             }
         }
-       
+     
+        if (selectedCategory == "Gradient") {
         Text(
             "50 GRADIENT STYLES",
             color = Color(0xFF8FEAFF),
@@ -2278,7 +2279,7 @@ private fun DesignStudio(
             }
         }
         
-        Text(
+        Text)  }
             "चुनी हुई कैटेगरी: $selectedCategory",
             color = Color.White,
             fontWeight = FontWeight.Bold
