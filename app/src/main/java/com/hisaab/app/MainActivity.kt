@@ -2109,14 +2109,33 @@ private fun DesignStudio(
         )
     }
 
-    var selectedManualColor by remember {
-        mutableIntStateOf(0)
-    }
 
-    var hue by remember { mutableFloatStateOf(210f) }
-    var saturation by remember { mutableFloatStateOf(0.72f) }
-    var brightness by remember { mutableFloatStateOf(0.92f) }
-    var manualHex by remember { mutableStateOf("") }
+var manualColors by remember(selectedScreen, design.colors) {
+    mutableStateOf(
+        (
+            design.colors.take(5) +
+            listOf(
+                0xFFFF3B5CL,
+                0xFFFFB52EL,
+                0xFF35D6A0L,
+                0xFF398BFFL,
+                0xFFA76BFFL
+            )
+        ).take(5)
+    )
+}
+
+var selectedManualColor by remember {
+    mutableIntStateOf(0)
+}
+
+var manualColorDialogOpen by remember {
+    mutableStateOf(false)
+}
+
+var hue by remember { mutableFloatStateOf(210f) }
+var saturation by remember { mutableFloatStateOf(0.72f) }
+var brightness by remember { mutableFloatStateOf(0.92f) }
 
     val colorGallery = remember {
         (1..30).map { index ->
