@@ -2101,7 +2101,7 @@ private fun DesignStudio(
         mutableStateOf<List<Long>?>(null)
     }
 
-    
+
 var manualColors by remember(selectedScreen, design.colors) {
     mutableStateOf(
         (
@@ -2129,10 +2129,6 @@ var hue by remember { mutableFloatStateOf(210f) }
 var saturation by remember { mutableFloatStateOf(0.72f) }
 var brightness by remember { mutableFloatStateOf(0.92f) }
 
-
-    val colorGallery = remember {
-        (1..30).map { index ->
-            val baseHue = ((index * 41) % 360).toFloat()
 
             listOf(
                 android.graphics.Color.HSVToColor(
