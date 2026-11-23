@@ -2285,7 +2285,7 @@ private fun DesignStudio(
             color = Color.White,
             fontWeight = FontWeight.Bold
         )
-        
+        if (selectedCategory != "Gradient" && selectedCategory != "Colors") {
         Text(
     "DESIGN GALLERY — 30 STYLES",
     color = Color(0xFF8FEAFF),
