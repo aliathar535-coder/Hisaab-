@@ -2396,6 +2396,7 @@ selectedPreset?.let { preset ->
     }
 }
 }
+       if (selectedCategory == "Colors") {
         Text(
             "READY-MADE COLOR GALLERY — 30",
             color = Color(0xFF8FEAFF),
@@ -2696,7 +2697,7 @@ selectedPreset?.let { preset ->
         ) {
             Text("मेरे Manual Colors APPLY करें")
         }
-        
+       }
         Text(
             "किस स्क्रीन का डिजाइन बदलना है?",
             color = Color.LightGray
