@@ -2664,7 +2664,42 @@ Button(
     Text("पाँचों रंग APPLY करें")
 }
 
-Divider(color = Color(0xFF52718A))
+
+Text(
+    "GRADIENT DIRECTION: ${design.gradientAngle.toInt()}°",
+    color = Color(0xFF8FEAFF),
+    fontWeight = FontWeight.Bold
+)
+
+Slider(
+    value = design.gradientAngle,
+    onValueChange = {
+        onDesignChange(
+            selectedScreen,
+            design.copy(gradientAngle = it)
+        )
+    },
+    valueRange = 0f..360f
+)
+
+Text(
+    "GRADIENT INTENSITY: ${(design.shading * 100).toInt()}%",
+    color = Color(0xFF8FEAFF),
+    fontWeight = FontWeight.Bold
+)
+
+Slider(
+    value = design.shading,
+    onValueChange = {
+        onDesignChange(
+            selectedScreen,
+            design.copy(shading = it)
+        )
+    },
+    valueRange = 0f..1f
+)
+p
+           Divider(color = Color(0xFF52718A))
 
         Text(
             "किस स्क्रीन का डिजाइन बदलना है?",
