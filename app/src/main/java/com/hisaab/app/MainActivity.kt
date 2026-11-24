@@ -83,6 +83,7 @@ private data class ScreenDesign(
     val gradientAngle: Float = 45f,
     val gradientType: String = "linear",
     val shading: Float = 0.35f
+    val colorPositions: List<Float> = listOf(0f, 0.25f, 0.5f, 0.75f, 1f)
 )
 
 private data class HistoryCardStyle(
