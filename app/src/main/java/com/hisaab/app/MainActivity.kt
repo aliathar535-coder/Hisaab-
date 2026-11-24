@@ -2698,7 +2698,7 @@ Slider(
     },
     valueRange = 0f..1f
 )
-p
+
            Divider(color = Color(0xFF52718A))
 
         Text(
