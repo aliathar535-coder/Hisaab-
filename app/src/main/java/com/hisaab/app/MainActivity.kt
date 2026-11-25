@@ -2083,7 +2083,25 @@ private fun DesignStudio(
             )
         }
     }
-    
+        val colorGallery = remember {
+        (0 until 30).map { index ->
+            val baseHue = (index * 37f) % 360f
+
+            listOf(
+                android.graphics.Color.HSVToColor(
+                    floatArrayOf(baseHue, 0.78f, 0.96f)
+                ).toLong() and 0xFFFFFFFFL,
+
+                android.graphics.Color.HSVToColor(
+                    floatArrayOf((baseHue + 42f) % 360f, 0.70f, 0.82f)
+                ).toLong() and 0xFFFFFFFFL,
+
+                android.graphics.Color.HSVToColor(
+                    floatArrayOf((baseHue + 190f) % 360f, 0.55f, 0.72f)
+                ).toLong() and 0xFFFFFFFFL
+            )
+        }
+        }
     val design = designs[selectedScreen] ?: ScreenDesign()
     
     var colorOne by remember(selectedScreen, design.color1) {
