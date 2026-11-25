@@ -3492,7 +3492,7 @@ design.colorPositions.take(5).forEach { position ->
         item.put("gradientAngle", design.gradientAngle)
 item.put("gradientType", design.gradientType)
 item.put("shading", design.shading)
-
+item.put("colorPositions", positionArray)
         json.put(screen, item)
     }
 
