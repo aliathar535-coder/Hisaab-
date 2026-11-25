@@ -2130,22 +2130,6 @@ var hue by remember { mutableFloatStateOf(210f) }
 var saturation by remember { mutableFloatStateOf(0.72f) }
 var brightness by remember { mutableFloatStateOf(0.92f) }
 
-
-            listOf(
-                android.graphics.Color.HSVToColor(
-                    floatArrayOf(baseHue, 0.78f, 0.96f)
-                ).toLong() and 0xFFFFFFFFL,
-
-                android.graphics.Color.HSVToColor(
-                    floatArrayOf((baseHue + 42f) % 360f, 0.70f, 0.82f)
-                ).toLong() and 0xFFFFFFFFL,
-
-                android.graphics.Color.HSVToColor(
-                    floatArrayOf((baseHue + 190f) % 360f, 0.55f, 0.72f)
-                ).toLong() and 0xFFFFFFFFL
-            )
-        }
-    }
     
     Column(
         modifier = Modifier
