@@ -3021,6 +3021,7 @@ private fun GlassCard(
                     type = design.gradientType,
                     colors = safeColors,
                     start = Offset(center.x - dx, center.y - dy),
+                    positions = design.colorPositions,
                     end = Offset(center.x + dx, center.y + dy),
                     center = center,
                     width = size.width,
