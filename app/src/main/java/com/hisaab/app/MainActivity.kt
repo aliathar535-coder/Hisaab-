@@ -2699,7 +2699,39 @@ Slider(
     },
     valueRange = 0f..1f
 )
+Text(
+    "FIVE COLOUR POSITION CONTROL",
+    color = Color(0xFF8FEAFF),
+    fontWeight = FontWeight.Bold
+)
 
+(0 until 5).forEach { index ->
+    val position = design.colorPositions.getOrElse(index) {
+        index / 4f
+    }
+
+    Text(
+        "रंग ${index + 1}: ${(position * 100).toInt()}%",
+        color = Color.White
+    )
+
+    Slider(
+        value = position,
+        onValueChange = { newPosition ->
+            val positions = (0 until 5).map { i ->
+                if (i == index) newPosition
+                else design.colorPositions.getOrElse(i) {
+                    i / 4f
+                }
+            }
+            onDesignChange(
+                selectedScreen,
+                design.copy(colorPositions = positions)
+            )
+        },
+        valueRange = 0f..1f
+    )
+}
            Divider(color = Color(0xFF52718A))
 
         Text(
