@@ -2892,6 +2892,7 @@ Slider(
 private fun makeGradientBrush(
     type: String,
     colors: List<Color>,
+    positions: List<Float>,
     start: Offset,
     end: Offset,
     center: Offset,
@@ -2902,26 +2903,35 @@ private fun makeGradientBrush(
         listOf(Color.Blue, Color.Cyan)
     }
 
+    val stops = safeColors.mapIndexed { index, color ->
+        val position = positions.getOrElse(index) {
+            if (safeColors.size <= 1) 0f
+            else index.toFloat() / (safeColors.size - 1)
+        }.coerceIn(0f, 1f)
+
+        position to color
+    }.sortedBy { it.first }.toTypedArray()
+
     return when (type) {
         "radial", "diamond" -> Brush.radialGradient(
-            colors = safeColors,
+            colorStops = stops,
             center = center,
             radius = maxOf(width, height) / 1.5f
         )
 
         "sweep" -> Brush.sweepGradient(
-            colors = safeColors,
+            colorStops = stops,
             center = center
         )
 
         "horizontal" -> Brush.linearGradient(
-            colors = safeColors,
+            colorStops = stops,
             start = Offset(0f, height / 2f),
             end = Offset(width, height / 2f)
         )
 
         "vertical" -> Brush.linearGradient(
-            colors = safeColors,
+            colorStops = stops,
             start = Offset(width / 2f, 0f),
             end = Offset(width / 2f, height)
         )
@@ -2939,7 +2949,7 @@ private fun makeGradientBrush(
         )
 
         else -> Brush.linearGradient(
-            colors = safeColors,
+            colorStops = stops,
             start = start,
             end = end
         )
