@@ -3452,6 +3452,13 @@ gradientType = item.optString(
 shading = item.optDouble(
     "shading", 0.35
 ).toFloat()
+,
+colorPositions = item.optJSONArray("colorPositions")?.let { array ->
+    (0 until array.length())
+        .map { array.optDouble(it).toFloat() }
+        .take(5)
+}?.takeIf { it.size == 5 }
+    ?: listOf(0f, 0.25f, 0.5f, 0.75f, 1f)
             )
         }
     }
