@@ -3477,7 +3477,11 @@ private fun saveDesigns(
         design.colors.take(5).forEach { color ->
             colorArray.put(color)
         }
+val positionArray = JSONArray()
 
+design.colorPositions.take(5).forEach { position ->
+    positionArray.put(position.toDouble())
+}
         item.put("enabled", design.enabled)
         item.put("color1", design.color1)
         item.put("color2", design.color2)
