@@ -2892,6 +2892,7 @@ Slider(
     }
 }
     }
+
 private fun makeGradientBrush(
     type: String,
     colors: List<Color>,
@@ -2916,13 +2917,15 @@ private fun makeGradientBrush(
     }.sortedBy { it.first }.toTypedArray()
 
     return when (type) {
-        "radial", "diamond" -> Brush.radialGradient(
+        "radial", "diamond", "mesh", "liquid",
+        "ocean", "pearl" -> Brush.radialGradient(
             colorStops = stops,
             center = center,
             radius = maxOf(width, height) / 1.5f
         )
 
-        "sweep" -> Brush.sweepGradient(
+        "sweep", "spiral", "vortex", "aurora",
+        "rainbow", "prism", "galaxy" -> Brush.sweepGradient(
             colorStops = stops,
             center = center
         )
@@ -2939,14 +2942,12 @@ private fun makeGradientBrush(
             end = Offset(width / 2f, height)
         )
 
-        "mirror" -> Brush.linearGradient(
-            colors = safeColors + safeColors.reversed(),
-            start = start,
-            end = end
-        )
-
-        "reflected" -> Brush.linearGradient(
-            colors = safeColors.reversed(),
+        "mirror", "reflected" -> Brush.linearGradient(
+            colors = if (type == "mirror") {
+                safeColors + safeColors.reversed()
+            } else {
+                safeColors.reversed()
+            },
             start = start,
             end = end
         )
@@ -2958,6 +2959,7 @@ private fun makeGradientBrush(
         )
     }
 }
+
 
 @Composable
 private fun GlassCard(
