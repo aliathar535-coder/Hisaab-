@@ -2266,17 +2266,19 @@ val sampleBrush = makeGradientBrush(
                     .fillMaxWidth()
                     .height(115.dp)
                     .background(
-                        when (style.effect) {
-                            "radial" -> Brush.radialGradient(
-                                colors = style.colors.map { Color(it) }
-                            )
-                            "sweep" -> Brush.sweepGradient(
-                                colors = style.colors.map { Color(it) }
-                            )
-                            else -> Brush.linearGradient(
-                                colors = style.colors.map { Color(it) }
-                            )
-                        },
+                                                makeGradientBrush(
+                            type = style.effect,
+                            colors = style.colors.map { Color(it) },
+                            positions = style.colors.indices.map {
+                                if (style.colors.size <= 1) 0f
+                                else it.toFloat() / (style.colors.size - 1)
+                            },
+                            start = Offset.Zero,
+                            end = Offset(360f, 115f),
+                            center = Offset(180f, 57.5f),
+                            width = 360f,
+                            height = 115f
+                        ),
                         RoundedCornerShape(16.dp)
                     ),
                 contentAlignment = Alignment.Center
