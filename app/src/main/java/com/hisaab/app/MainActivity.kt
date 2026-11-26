@@ -2212,18 +2212,20 @@ var brightness by remember { mutableFloatStateOf(0.92f) }
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 styleRow.forEach { style ->
-                    val sampleBrush = when (style.effect) {
-                        "radial" -> Brush.radialGradient(
-                            style.colors.map { Color(it) }
-                        )
-                        "sweep" -> Brush.sweepGradient(
-                            style.colors.map { Color(it) }
-                        )
-                        else -> Brush.linearGradient(
-                            style.colors.map { Color(it) }
-                        )
-                    }
-
+                    val sampleColors = style.colors.map { Color(it) }
+val sampleBrush = makeGradientBrush(
+    type = style.effect,
+    colors = sampleColors,
+    positions = sampleColors.indices.map {
+        if (sampleColors.size <= 1) 0f
+        else it.toFloat() / (sampleColors.size - 1)
+    },
+    start = Offset.Zero,
+    end = Offset(180f, 100f),
+    center = Offset(90f, 50f),
+    width = 180f,
+    height = 100f
+)
                     Card(
                         onClick = {
                             selectedGradientStyle = style
