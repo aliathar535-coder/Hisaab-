@@ -2276,7 +2276,7 @@ val previewDy = kotlin.math.sin(previewAngle).toFloat() * 57.5f
                                 if (style.colors.size <= 1) 0f
                                 else it.toFloat() / (style.colors.size - 1)
                             },
-                            start = Offset.Zero,
+                            start = Offset(180f - previewDx, 57.5f - previewDy),
                             end = Offset(360f, 115f),
                             center = Offset(180f, 57.5f),
                             width = 360f,
