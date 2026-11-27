@@ -2062,7 +2062,7 @@ private fun DesignStudio(
 )
 
     val gradientStyles = remember {
-        (1..50).map { index ->
+   (1..60).map { index ->
             val family = gradientFamilies[(index - 1) / 2]
             val variant = if (index % 2 == 0) 2 else 1
 
