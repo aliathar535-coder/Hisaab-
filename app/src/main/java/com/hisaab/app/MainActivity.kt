@@ -2254,8 +2254,11 @@ val sampleBrush = makeGradientBrush(
         }
 
         
-        selectedGradientStyle?.let { style ->
-            Text(
+            selectedGradientStyle?.let { style ->
+           val previewAngle = Math.toRadians(style.angle.toDouble())
+val previewDx = kotlin.math.cos(previewAngle).toFloat() * 180f
+val previewDy = kotlin.math.sin(previewAngle).toFloat() * 57.5f
+                Text(
                 "PREVIEW: ${style.name}",
                 color = Color(0xFF8FEAFF),
                 fontWeight = FontWeight.Bold
