@@ -3274,6 +3274,39 @@ if (design.gradientType == "mesh") {
         )
     }
 }
+                  // Spiral effect: colorful curved path.
+if (design.gradientType == "spiral") {
+    val spiralCenter = Offset(
+        size.width / 2f,
+        size.height / 2f
+    )
+
+    var previousPoint = spiralCenter
+
+    for (step in 1..120) {
+        val angle = step * 0.16f
+        val distance = size.minDimension *
+            (0.04f + step / 120f * 0.42f)
+
+        val currentPoint = Offset(
+            spiralCenter.x +
+                kotlin.math.cos(angle.toDouble()).toFloat() * distance,
+            spiralCenter.y +
+                kotlin.math.sin(angle.toDouble()).toFloat() *
+                distance * 0.65f
+        )
+
+        drawLine(
+            color = safeColors[step % safeColors.size]
+                .copy(alpha = 0.75f),
+            start = previousPoint,
+            end = currentPoint,
+            strokeWidth = size.minDimension * 0.012f
+        )
+
+        previousPoint = currentPoint
+    }
+}
                     if (enabled) {
                         // Light and dark depth.
                         drawRoundRect(
