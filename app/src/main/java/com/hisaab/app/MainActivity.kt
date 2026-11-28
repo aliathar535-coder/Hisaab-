@@ -3062,6 +3062,7 @@ Slider(
     }
 }
     }
+        }
 private fun makeGradientBrush(
     type: String,
     colors: List<Color>,
