@@ -3346,6 +3346,36 @@ if (
         )
     }
 }
+                                       // Liquid Flow: flowing colorful liquid waves.
+                    if (design.gradientType == "liquid-flow") {
+                        for (index in 0..3) {
+                            val liquidColor =
+                                safeColors[index % safeColors.size]
+
+                            drawOval(
+                                brush = Brush.radialGradient(
+                                    colors = listOf(
+                                        liquidColor.copy(alpha = 0.72f),
+                                        liquidColor.copy(alpha = 0.18f),
+                                        Color.Transparent
+                                    ),
+                                    center = Offset(
+                                        size.width * (0.18f + index * 0.22f),
+                                        size.height * (0.30f + (index % 2) * 0.35f)
+                                    ),
+                                    radius = size.minDimension * 0.62f
+                                ),
+                                topLeft = Offset(
+                                    size.width * (index * 0.12f),
+                                    size.height * (index % 2) * 0.18f
+                                ),
+                                size = androidx.compose.ui.geometry.Size(
+                                    size.width * 0.72f,
+                                    size.height * 0.72f
+                                )
+                            )
+                        }
+                    }
                     if (enabled) {
                         // Light and dark depth.
                         drawRoundRect(
