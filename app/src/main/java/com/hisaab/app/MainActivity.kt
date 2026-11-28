@@ -2904,8 +2904,78 @@ Slider(
     }
 }
     }
+private fun makeGradientBrush(
+    type: String,
+    colors: List<Color>,
+    positions: List<Float>,
+    start: Offset,
+    end: Offset,
+    center: Offset,
+    width: Float,
+    height: Float
+): Brush {
+    val c = colors.ifEmpty {
+        listOf(Color.Blue, Color.Cyan, Color.Magenta)
+    }
 
-pa q
+    val stops = c.mapIndexed { i, color ->
+        val p = positions.getOrElse(i) {
+            if (c.size <= 1) 0f
+            else i.toFloat() / (c.size - 1)
+        }.coerceIn(0f, 1f)
+        p to color
+    }.sortedBy { it.first }.toTypedArray()
+
+    val radius = maxOf(width, height).coerceAtLeast(1f)
+
+    return when (type) {
+        "linear", "diagonal" ->
+            Brush.linearGradient(
+                colors = c,
+                start = start,
+                end = end
+            )
+
+        "radial" ->
+            Brush.radialGradient(
+                colors = c,
+                center = center,
+                radius = radius
+            )
+
+        "sweep" ->
+            Brush.sweepGradient(
+                colors = c,
+                center = center
+            )
+
+        "horizontal" ->
+            Brush.linearGradient(
+                colors = c,
+                start = Offset(0f, height / 2f),
+                end = Offset(width, height / 2f)
+            )
+
+        "vertical" ->
+            Brush.linearGradient(
+                colors = c,
+                start = Offset(width / 2f, 0f),
+                end = Offset(width / 2f, height)
+            )
+
+        "mirror" ->
+            Brush.linearGradient(
+                colors = c + c.reversed(),
+                start = start,
+                end = end
+            )
+
+        "reflected" ->
+            Brush.linearGradient(
+                colors = c.reversed() + c,
+                start = start,
+                end = end
+            )
 
         "diamond", "crystal" ->
             Brush.radialGradient(
@@ -3030,7 +3100,6 @@ pa q
             )
     }
 }
-
 
 @Composable
 private fun GlassCard(
