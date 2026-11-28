@@ -2154,9 +2154,10 @@ var saturation by remember { mutableFloatStateOf(0.72f) }
 var brightness by remember { mutableFloatStateOf(0.92f) }
 
     
-    Column(
+        Column(
         modifier = Modifier
             .fillMaxWidth()
+            .height(560.dp)
             .background(
                 Color(0x26172B43),
                 RoundedCornerShape(22.dp)
@@ -2166,9 +2167,164 @@ var brightness by remember { mutableFloatStateOf(0.92f) }
                 Color(0x5570DDF5),
                 RoundedCornerShape(22.dp)
             )
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+            .padding(10.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
+        val liveColors = selectedGradientStyle?.colors ?: design.colors
+        val liveEffect = selectedGradientStyle?.effect ?: design.gradientType
+
+        Text(
+            "LIVE DESIGN PREVIEW",
+            color = Color(0xFF8FEAFF),
+            fontWeight = FontWeight.Bold,
+            fontSize = 12.sp
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(72.dp)
+                .background(
+                    makeGradientBrush(
+                        type = liveEffect,
+                        colors = liveColors.map { Color(it) },
+                        positions = liveColors.indices.map {
+                            if (liveColors.size <= 1) 0f
+                            else it.toFloat() / (liveColors.size - 1)
+                        },
+                        start = Offset.Zero,
+                        end = Offset(360f, 100f),
+                        center = Offset(180f, 50f),
+                        width = 360f,
+                        height = 100f
+                    ),
+                    RoundedCornerShape(14.dp)
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                selectedGradientStyle?.name ?: "Live Preview",
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        Text(
+            "QUICK CONTROLS",
+            color = Color(0xFF8FEAFF),
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(Modifier.weight(1f)) {
+                Text("Angle: ${design.gradientAngle.toInt()}°", color = Color.White, fontSize = 10.sp)
+                Slider(
+                    value = design.gradientAngle,
+                    onValueChange = {
+                        onDesignChange(selectedScreen, design.copy(gradientAngle = it))
+                    },
+                    valueRange = 0f..360f,
+                    modifier = Modifier.height(28.dp)
+                )
+            }
+            Column(Modifier.weight(1f)) {
+                Text("Intensity: ${(design.shading * 100).toInt()}%", color = Color.White, fontSize = 10.sp)
+                Slider(
+                    value = design.shading,
+                    onValueChange = {
+                        onDesignChange(selectedScreen, design.copy(shading = it))
+                    },
+                    valueRange = 0f..1f,
+                    modifier = Modifier.height(28.dp)
+                )
+            }
+        }
+
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(Modifier.weight(1f)) {
+                Text("Transparency: ${(design.transparency * 100).toInt()}%", color = Color.White, fontSize = 10.sp)
+                Slider(
+                    value = design.transparency,
+                    onValueChange = {
+                        onDesignChange(selectedScreen, design.copy(transparency = it))
+                    },
+                    valueRange = 0.1f..1f,
+                    modifier = Modifier.height(28.dp)
+                )
+            }
+            Column(Modifier.weight(1f)) {
+                Text("Glow: ${(design.glow * 100).toInt()}%", color = Color.White, fontSize = 10.sp)
+                Slider(
+                    value = design.glow,
+                    onValueChange = {
+                        onDesignChange(selectedScreen, design.copy(glow = it))
+                    },
+                    valueRange = 0f..1f,
+                    modifier = Modifier.height(28.dp)
+                )
+            }
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Column(Modifier.weight(1f)) {
+                Text("3D Depth: ${design.depth.toInt()}", color = Color.White, fontSize = 10.sp)
+                Slider(
+                    value = design.depth,
+                    onValueChange = {
+                        onDesignChange(selectedScreen, design.copy(depth = it))
+                    },
+                    valueRange = 0f..30f,
+                    modifier = Modifier.height(28.dp)
+                )
+            }
+            Row(
+                Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("3D Glass", color = Color.White, fontSize = 11.sp, modifier = Modifier.weight(1f))
+                Switch(
+                    checked = design.enabled,
+                    onCheckedChange = {
+                        onDesignChange(selectedScreen, design.copy(enabled = it))
+                    }
+                )
+            }
+        }
+
+        Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+            manualColors.forEachIndexed { index, value ->
+                Card(
+                    onClick = {
+                        selectedManualColor = index
+                        val hsv = FloatArray(3)
+                        android.graphics.Color.colorToHSV(value.toInt(), hsv)
+                        hue = hsv[0]
+                        saturation = hsv[1]
+                        brightness = hsv[2]
+                        manualColorDialogOpen = true
+                    },
+                    modifier = Modifier.weight(1f).height(25.dp)
+                ) {
+                    Box(
+                        Modifier.fillMaxSize().background(Color(value))
+                    )
+                }
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .verticalScroll(
+                    androidx.compose.foundation.rememberScrollState()
+                ),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
                 Text(
             "DESIGN CATEGORIES",
             color = Color(0xFF8FEAFF),
