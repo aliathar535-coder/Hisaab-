@@ -3249,6 +3249,31 @@ private fun GlassCard(
                         cornerRadius = corner
                     )
 
+                   // Mesh effect: three soft glowing color fields.
+if (design.gradientType == "mesh") {
+    val meshRadius = size.minDimension * 0.65f
+
+    val meshPoints = listOf(
+        Offset(size.width * 0.22f, size.height * 0.30f),
+        Offset(size.width * 0.72f, size.height * 0.28f),
+        Offset(size.width * 0.50f, size.height * 0.78f)
+    )
+
+    meshPoints.forEachIndexed { index, point ->
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(
+                    safeColors[index % safeColors.size].copy(alpha = 0.55f),
+                    Color.Transparent
+                ),
+                center = point,
+                radius = meshRadius
+            ),
+            radius = meshRadius,
+            center = point
+        )
+    }
+}
                     if (enabled) {
                         // Light and dark depth.
                         drawRoundRect(
