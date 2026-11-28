@@ -2171,8 +2171,11 @@ var brightness by remember { mutableFloatStateOf(0.92f) }
             .padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        val liveColors = selectedGradientStyle?.colors ?: design.colors
-        val liveEffect = selectedGradientStyle?.effect ?: design.gradientType
+                val livePreset = selectedGradientStyle ?: selectedPreset
+        val liveColors = livePreset?.colors
+            ?: selectedColorPreset
+            ?: if (selectedCategory == "Colors") manualColors else design.colors
+        val liveEffect = livePreset?.effect ?: design.gradientType
 
         Text(
             "LIVE DESIGN PREVIEW",
