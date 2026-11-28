@@ -2191,12 +2191,12 @@ var brightness by remember { mutableFloatStateOf(0.92f) }
             design = design.copy(
                 colors = liveColors,
                 gradientType = liveEffect,
-                gradientAngle = selectedGradientStyle?.angle
-                    ?: design.gradientAngle,
-                depth = selectedGradientStyle?.depth
-                    ?: design.depth,
-                glow = selectedGradientStyle?.glow
-                    ?: design.glow,
+                gradientAngle = livePreset?.angle
+    ?: design.gradientAngle,
+depth = livePreset?.depth
+    ?: design.depth,
+glow = livePreset?.glow
+    ?: design.glow,
                 colorPositions = liveColors.indices.map {
                     if (liveColors.size <= 1) 0f
                     else it.toFloat() / (liveColors.size - 1)
