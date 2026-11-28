@@ -2371,8 +2371,11 @@ var brightness by remember { mutableFloatStateOf(0.92f) }
 
         gradientStyles.chunked(5).forEach { styleRow ->
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        val livePreset = selectedGradientStyle ?: selectedPreset
+        val liveColors = livePreset?.colors
+            ?: selectedColorPreset
+            ?: if (selectedCategory == "Colors") manualColors else design.colors
+        val liveEffect = livePreset?.effect ?: design.gradientType
             ) {
                 styleRow.forEach { style ->
                     val sampleColors = style.colors.map { Color(it) }
