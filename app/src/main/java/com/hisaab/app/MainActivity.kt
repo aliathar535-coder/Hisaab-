@@ -2180,35 +2180,36 @@ var brightness by remember { mutableFloatStateOf(0.92f) }
             fontSize = 12.sp
         )
 
-        Box(
+                GlassCard(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(72.dp)
-                .background(
-                    makeGradientBrush(
-                        type = liveEffect,
-                        colors = liveColors.map { Color(it) },
-                        positions = liveColors.indices.map {
-                            if (liveColors.size <= 1) 0f
-                            else it.toFloat() / (liveColors.size - 1)
-                        },
-                        start = Offset.Zero,
-                        end = Offset(360f, 100f),
-                        center = Offset(180f, 50f),
-                        width = 360f,
-                        height = 100f
-                    ),
-                    RoundedCornerShape(14.dp)
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                selectedGradientStyle?.name ?: "Live Preview",
-                color = Color.White,
-                fontWeight = FontWeight.Bold
+                .height(72.dp),
+            design = design.copy(
+                colors = liveColors,
+                gradientType = liveEffect,
+                gradientAngle = selectedGradientStyle?.angle
+                    ?: design.gradientAngle,
+                depth = selectedGradientStyle?.depth
+                    ?: design.depth,
+                glow = selectedGradientStyle?.glow
+                    ?: design.glow,
+                colorPositions = liveColors.indices.map {
+                    if (liveColors.size <= 1) 0f
+                    else it.toFloat() / (liveColors.size - 1)
+                }
             )
-        }
-
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    selectedGradientStyle?.name ?: "HISAAB LIVE PREVIEW",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+                }
         Text(
             "QUICK CONTROLS",
             color = Color(0xFF8FEAFF),
