@@ -2208,7 +2208,7 @@ var brightness by remember { mutableFloatStateOf(0.92f) }
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    selectedGradientStyle?.name ?: "HISAAB LIVE PREVIEW",
+                    livePreset?.name ?: "HISAAB LIVE PREVIEW",
                     color = Color.White,
                     fontWeight = FontWeight.Bold
                 )
