@@ -3307,6 +3307,45 @@ if (design.gradientType == "spiral") {
         previousPoint = currentPoint
     }
 }
+                  // Aurora Glow: layered flowing light.
+if (
+    design.gradientType == "aurora" ||
+    design.gradientType == "aurora-glow"
+) {
+    val auroraColors = safeColors
+
+    for (index in 0..2) {
+        val auroraBrush = Brush.linearGradient(
+            colors = listOf(
+                Color.Transparent,
+                auroraColors[index % auroraColors.size]
+                    .copy(alpha = 0.48f),
+                Color.Transparent
+            ),
+            start = Offset(
+                size.width * (index * 0.25f),
+                size.height
+            ),
+            end = Offset(
+                size.width * (0.45f + index * 0.2f),
+                0f
+            )
+        )
+
+        drawRoundRect(
+            brush = auroraBrush,
+            topLeft = Offset(
+                size.width * (index * 0.08f),
+                size.height * (index * 0.12f)
+            ),
+            size = androidx.compose.ui.geometry.Size(
+                size.width * 0.85f,
+                size.height * 0.76f
+            ),
+            cornerRadius = corner
+        )
+    }
+}
                     if (enabled) {
                         // Light and dark depth.
                         drawRoundRect(
