@@ -2905,70 +2905,129 @@ Slider(
 }
     }
 
-private fun makeGradientBrush(
-    type: String,
-    colors: List<Color>,
-    positions: List<Float>,
-    start: Offset,
-    end: Offset,
-    center: Offset,
-    width: Float,
-    height: Float
-): Brush {
-    val safeColors = colors.ifEmpty {
-        listOf(Color.Blue, Color.Cyan)
-    }
+pa q
 
-    val stops = safeColors.mapIndexed { index, color ->
-        val position = positions.getOrElse(index) {
-            if (safeColors.size <= 1) 0f
-            else index.toFloat() / (safeColors.size - 1)
-        }.coerceIn(0f, 1f)
+        "diamond", "crystal" ->
+            Brush.radialGradient(
+                colors = c.reversed(),
+                center = Offset(width * 0.5f, height * 0.5f),
+                radius = radius * 0.72f
+            )
 
-        position to color
-    }.sortedBy { it.first }.toTypedArray()
+        "spiral", "vortex" ->
+            Brush.sweepGradient(
+                colors = c + c.reversed(),
+                center = Offset(width * 0.42f, height * 0.55f)
+            )
 
-    return when (type) {
-        "radial", "diamond", "mesh", "liquid",
-        "ocean", "pearl" -> Brush.radialGradient(
-            colorStops = stops,
-            center = center,
-            radius = maxOf(width, height) / 1.5f
-        )
+        "mesh" ->
+            Brush.radialGradient(
+                colors = c + c.reversed(),
+                center = Offset(width * 0.72f, height * 0.32f),
+                radius = radius * 0.85f
+            )
 
-        "sweep", "spiral", "vortex", "aurora",
-        "rainbow", "prism", "galaxy" -> Brush.sweepGradient(
-            colorStops = stops,
-            center = center
-        )
+        "aurora", "aurora-glow" ->
+            Brush.linearGradient(
+                colors = c + c.reversed(),
+                start = Offset(0f, height),
+                end = Offset(width, 0f)
+            )
 
-        "horizontal" -> Brush.linearGradient(
-            colorStops = stops,
-            start = Offset(0f, height / 2f),
-            end = Offset(width, height / 2f)
-        )
+        "liquid", "liquid-flow" ->
+            Brush.radialGradient(
+                colors = c,
+                center = Offset(width * 0.3f, height * 0.7f),
+                radius = radius * 1.1f
+            )
 
-        "vertical" -> Brush.linearGradient(
-            colorStops = stops,
-            start = Offset(width / 2f, 0f),
-            end = Offset(width / 2f, height)
-        )
+        "prism", "holographic" ->
+            Brush.sweepGradient(
+                colors = c + c.reversed(),
+                center = Offset(width * 0.5f, height * 0.4f)
+            )
 
-        "mirror", "reflected" -> Brush.linearGradient(
-            colors = if (type == "mirror") {
-                safeColors + safeColors.reversed()
-            } else {
-                safeColors.reversed()
-            },
-            start = start,
-            end = end
-        )
+        "multi-stop" ->
+            Brush.linearGradient(
+                colorStops = stops,
+                start = start,
+                end = end
+            )
 
-        else -> Brush.linearGradient(
-            colorStops = stops,
-            start = start,
-            end = end
-        )
+        "wave" ->
+            Brush.linearGradient(
+                colors = c + c.reversed(),
+                start = Offset(0f, height * 0.25f),
+                end = Offset(width, height * 0.8f)
+            )
+
+        "neon" ->
+            Brush.radialGradient(
+                colors = c + listOf(c.first()),
+                center = Offset(width * 0.5f, height * 0.5f),
+                radius = radius * 0.65f
+            )
+
+        "galaxy" ->
+            Brush.sweepGradient(
+                colors = c.reversed() + c,
+                center = Offset(width * 0.35f, height * 0.45f)
+            )
+
+        "sunset" ->
+            Brush.linearGradient(
+                colors = c,
+                start = Offset(0f, height),
+                end = Offset(width, 0f)
+            )
+
+        "ocean" ->
+            Brush.radialGradient(
+                colors = c.reversed(),
+                center = Offset(width * 0.25f, height * 0.75f),
+                radius = radius
+            )
+
+        "flame" ->
+            Brush.linearGradient(
+                colors = c.reversed(),
+                start = Offset(width * 0.5f, height),
+                end = Offset(width * 0.5f, 0f)
+            )
+
+        "rainbow" ->
+            Brush.sweepGradient(
+                colors = c + c.reversed() + c,
+                center = center
+            )
+
+        "chrome" ->
+            Brush.linearGradient(
+                colors = c + Color.White + c.reversed(),
+                start = Offset(0f, 0f),
+                end = Offset(width, height)
+            )
+
+        "pearl" ->
+            Brush.radialGradient(
+                colors = c + Color.White,
+                center = Offset(width * 0.35f, height * 0.3f),
+                radius = radius * 0.9f
+            )
+
+        "color-burst" ->
+            Brush.radialGradient(
+                colors = c + c.reversed(),
+                center = Offset(width * 0.8f, height * 0.5f),
+                radius = radius * 0.7f
+            )
+
+        else ->
+            Brush.linearGradient(
+                colorStops = stops,
+                start = start,
+                end = end
+            )
     }
 }
 
